@@ -1,0 +1,28 @@
+[
+  { "service": "SA", "type": "fire_alarm_weekly_test", "last_done": "2026-11-08" },
+  { "service": "SA", "type": "fire_exit_check", "last_done": "2026-11-20" },
+  { "service": "SA", "type": "gas_safety", "expires": "2027-06-01" },
+  { "service": "SA", "type": "eicr", "expires": "2027-01-15" },
+  { "service": "SA", "type": "medication_audit", "last_done": "2026-11-02" },
+  { "service": "SA", "type": "qa_audit", "last_done": "2026-08-10",
+    "actions": [ { "owner": "Manager A", "next_step": "QA visit booked with compliance lead", "next_step_date": "2026-12-03", "status": "open" } ] },
+
+  { "service": "SB", "type": "fire_alarm_weekly_test", "last_done": "2026-11-27" },
+  { "service": "SB", "type": "gas_safety", "expires": "2026-11-18",
+    "actions": [ { "owner": "Deputy B", "next_step": "Landlord engineer booked", "next_step_date": "2026-12-02", "status": "open" } ] },
+  { "service": "SB", "type": "fire_alarm_service", "last_done": "2026-06-10" },
+  { "service": "SB", "type": "epc", "expires": "2031-03-01" },
+  { "service": "SB", "type": "occupancy_tracker", "last_done": "2026-11-23" },
+
+  { "service": "SC", "type": "fire_alarm_weekly_test", "last_done": "2026-11-26" },
+  { "service": "SC", "type": "fire_risk_assessment", "expires": null },
+  { "service": "SC", "type": "legionella_risk_assessment", "last_done": "2025-01-20" },
+  { "service": "SC", "type": "support_plan_review", "ref": "P-01", "last_done": "2026-05-12" },
+  { "service": "SC", "type": "support_plan_review", "ref": "P-02", "last_done": "2026-10-01" },
+
+  { "service": "SD", "type": "fire_alarm_weekly_test", "last_done": "2026-11-29" },
+  { "service": "SD", "type": "fire_exit_check", "last_done": "2026-11-01" },
+  { "service": "SD", "type": "loler_hoist", "applicable": false },
+  { "service": "SD", "type": "dols_authorisation", "ref": "P-07", "expires": "2027-01-20" },
+  { "service": "SD", "type": "care_act_review", "ref": "P-07", "last_done": "2025-12-10" }
+]

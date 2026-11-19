@@ -1,0 +1,31 @@
+# Every Monday 07:00 UTC: list docs, skills, memory and compliance rules past their review date,
+# and keep one open issue up to date so nothing silently goes stale.
+name: Weekly freshness check
+on:
+  schedule:
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - id: check
+        run: |
+          node scripts/check-freshness.mjs > freshness.txt
+          cat freshness.txt
+          if grep -q "⚠" freshness.txt; then echo "stale=true" >> "$GITHUB_OUTPUT"; fi
+      - if: steps.check.outputs.stale == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Docs and rules due for review"
+          body="$(printf 'Weekly freshness check found items past their review date.\n\n```\n%s\n```\n\nRun the `update-project-memory` skill, re-check sources, and bump `last_reviewed` / `last_checked`.' "$(cat freshness.txt)")"
+          num=$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number')
+          if [ -n "$num" ]; then gh issue comment "$num" --body "$body"; else gh issue create --title "$title" --body "$body"; fi

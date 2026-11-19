@@ -1,0 +1,25 @@
+{
+  "today": "2026-11-30",
+  "head_office": [
+    { "name": "Director (South)", "role": "director", "email": "director@example.invalid" },
+    { "name": "Compliance & QA lead", "role": "qa_lead", "email": "qa@example.invalid" }
+  ],
+  "services": [
+    { "id": "SA", "name": "Service A", "people": [
+      { "name": "Manager A", "role": "service_manager", "email": "a.manager@example.invalid" },
+      { "name": "Deputy A", "role": "deputy_manager", "email": "a.deputy@example.invalid" },
+      { "name": "Team leader A", "role": "team_leader", "email": "a.tl@example.invalid" },
+      { "name": "Support worker A1", "role": "support_worker", "email": "a.sw1@example.invalid" }
+    ]},
+    { "id": "SB", "name": "Service B", "people": [
+      { "name": "Manager B", "role": "service_manager", "email": "b.manager@example.invalid", "on_leave": true, "delegate": "Deputy B" },
+      { "name": "Deputy B", "role": "deputy_manager", "email": "b.deputy@example.invalid" }
+    ]},
+    { "id": "SC", "name": "Service C", "people": [
+      { "name": "Manager C", "role": "service_manager", "email": "c.manager@example.invalid" }
+    ]},
+    { "id": "SD", "name": "Service D", "people": [
+      { "name": "Manager D", "role": "service_manager", "email": "d.manager@example.invalid" }
+    ]}
+  ]
+}
