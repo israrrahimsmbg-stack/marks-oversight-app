@@ -1,7 +1,7 @@
 ---
 title: Elicitation questions
 status: OPEN
-last_reviewed: 2026-11-19
+last_reviewed: 2026-11-20
 review_every_days: 7
 ---
 
@@ -71,7 +71,7 @@ When a question is answered: fill **Answer**, set **Status** to `answered (date,
 |---|---|---|---|
 | E1 | List all services and the service manager, deputy, team leaders for each. | | open |
 | E2 | Who can view what? Who can edit, close an item, or override? | | open |
-| E3 | How should users log in (company Microsoft account)? | | open |
+| E3 | How should users log in (company Microsoft account)? | Yes: IT requires staff to sign in with company Microsoft accounts (Entra ID). | answered (2026-11-20, ZACK relaying IT) |
 | E4 | Who administers the app (add services, users, rules)? | | open |
 | E5 | Do managers use PC, phone or tablet? | | open |
 

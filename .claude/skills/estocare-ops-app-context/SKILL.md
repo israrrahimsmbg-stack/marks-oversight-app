@@ -1,7 +1,7 @@
 ---
 name: estocare-ops-app-context
 description: Use for anything involving the existing Esto Care Operations app (Phase 0): its code, data, roles, compliance checks, build and publishing, or how Mark's app plugs into it.
-last_reviewed: 2026-11-19
+last_reviewed: 2026-11-20
 review_every_days: 30
 ---
 
@@ -17,6 +17,10 @@ Full notes: `docs/ESTOCARE_OPS_APP.md`. Re-read the repo when it changes; don't 
 - Roles: super-admin, director, home-manager, contributor, viewer; per-home scope.
 - Compliance states: ok / due (≤30 days) / overdue / na / unknown, stored at `homes/<id>.compliance[<key>]`.
 - 24 services listed (South S01–S14, North N01–N10) from estocare.com, Oct 2026. Mark Horton is listed as the South contact.
+
+## Sign-in rule (2026-11-20)
+
+IT requires company Microsoft accounts (ADR-0007). This app's own PBKDF2 accounts don't meet that; check with ZACK whether it affects the Phase 0 go-live, and don't build Mark's app on these accounts.
 
 ## Phase 0 status
 

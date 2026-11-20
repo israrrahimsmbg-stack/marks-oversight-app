@@ -1,6 +1,6 @@
 ---
 title: Assumptions and open questions
-last_reviewed: 2026-11-19
+last_reviewed: 2026-11-20
 review_every_days: 7
 ---
 
@@ -19,7 +19,7 @@ When an assumption is confirmed or proven wrong, move it to **Resolved** with th
 | AS-05 | Thresholds: service manager at 7 days, head office at 14 days. | Escalation config only. | Mark, Hamida | open |
 | AS-06 | The report goes to Mark by email on Monday morning, with an in-app view for drill-down. | Delivery (ADR-0003). | Mark | open |
 | AS-07 | Mark's app holds no resident names in Phase 1; person-level items use a reference only. | DPIA scope. | Yasmin, DPO | open |
-| AS-08 | Company uses Microsoft 365 (Teams, SharePoint, Outlook). Based on meeting transcripts from Teams. | Sign-in, email, platform choice. | IT | open |
+| AS-08 | Company uses Microsoft 365 (Teams, SharePoint, Outlook). Based on meeting transcripts from Teams. | Sign-in, email, platform choice. | IT | confirmed 2026-11-20 (IT requires Microsoft sign-in) |
 | AS-09 | Service manager, deputy and team leader can all update the tracker; only managers and head office can close or override. | Roles and permissions. | Yasmin | open |
 | AS-10 | Medication administration stays in PCS; we only track that the audit was done and its actions. | Medication scope. | Hamida | open (BRD 4.2) |
 | AS-11 | For landlord-held certificates, Esto Care records the date and holds a copy; chasing the landlord is the service manager's action. | Owner of actions. | Hamida | open |
@@ -39,5 +39,6 @@ When an assumption is confirmed or proven wrong, move it to **Resolved** with th
 
 | Date | Item | Outcome | Who |
 |---|---|---|---|
+| 2026-11-20 | How do staff sign in? | Company Microsoft accounts (Entra ID), required by IT. Rules out the Operations app's own password accounts for Mark's app (ADR-0007). | ZACK, relaying IT |
 | 2026-11-19 | Do support workers get escalation notices? | No. Service manager first; Mark and Hamida last resort. | Hamida, citing Mark |
 | 2026-11-18 | Is it compliance only? | No: "everything", finance, compliance, voids. Phased, compliance first. | Mark; phasing by Yasmin |

@@ -1,6 +1,6 @@
 ---
 title: Business decisions
-last_reviewed: 2026-11-19
+last_reviewed: 2026-11-20
 review_every_days: 30
 ---
 
@@ -10,6 +10,7 @@ Newest first. Architectural decisions are ADRs in `docs/DECISIONS.md`.
 
 | Date | Decision | Who | Source |
 |---|---|---|---|
+| 2026-11-20 | Staff must sign in with company Microsoft accounts (Entra ID). | IT, relayed by ZACK | thread message 20 Nov |
 | 2026-11-19 | Escalation goes to the service manager; Mark and Hamida are last resort; support workers are not notified. | Hamida (citing Mark) | 19 Nov transcript ~13:51, 15:13 |
 | 2026-11-19 | One standard set of trackers for every house; the Grange version is the model. | Hamida (Mark's wish) | 19 Nov transcript ~10:46, 16:24 |
 | 2026-11-19 | Service manager, deputy and team leader should all have access to the tracker. | Yasmin | 19 Nov transcript ~14:53 |

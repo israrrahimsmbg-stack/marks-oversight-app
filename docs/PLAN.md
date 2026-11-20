@@ -2,7 +2,7 @@
 title: Delivery plan
 status: DRAFT v0.1
 owner: Zakir Hussain (BA/dev)
-last_reviewed: 2026-11-19
+last_reviewed: 2026-11-20
 review_every_days: 14
 ---
 
@@ -73,7 +73,8 @@ The repo `israrrahimsmbg-stack/esto-care-operations` is a **single-page vanilla 
 
 **Recommendation:**
 
-- **Phase 1: Option A.** Build the report as a new "Oversight" section of the Operations app so Mark sees one system, using the same homes, roles and compliance data. Put all logic in the portable rules engine in this repo (`src/rules/`), so nothing is lost if we move.
+- **Update 20 Nov 2026: IT requires company Microsoft sign-in (ADR-0007), so Option A no longer fits as it stands.** New recommendation: Option C on Azure (Static Web Apps with built-in Entra ID sign-in, Azure Functions timer for the Monday report, UK South data), reusing `src/rules/` as is; Option B (Power Platform) as fallback. See ADR-0002.
+- *(Original, superseded)* **Phase 1: Option A.** Build the report as a new "Oversight" section of the Operations app so Mark sees one system, using the same homes, roles and compliance data. Put all logic in the portable rules engine in this repo (`src/rules/`), so nothing is lost if we move.
 - **Monday email for Phase 1:** a scheduled job runs the rules engine over the latest data and sends the result through the company Microsoft 365 mailbox. Two ways to do it, to decide with Yasmin/IT: a scheduled Claude routine that reads the app's database and sends via the Microsoft 365 connector, or Power Automate if the data is mirrored to SharePoint. The report content is always produced by the deterministic rules engine, never written freehand.
 - **Decide the long-term platform (A vs B vs C) by end of Phase 1**, once we know IT's hosting rules, whether managers must sign in with Microsoft accounts, and what the DPIA says. Recorded as ADR-0001 (proposed) and ADR-0002 (open) in [`DECISIONS.md`](DECISIONS.md).
 
