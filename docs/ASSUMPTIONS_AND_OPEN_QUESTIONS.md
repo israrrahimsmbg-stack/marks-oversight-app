@@ -13,7 +13,7 @@ When an assumption is confirmed or proven wrong, move it to **Resolved** with th
 | ID | Assumption | If wrong, what changes | Check with | Status |
 |---|---|---|---|---|
 | AS-01 | Mark's app extends the Operations app rather than being a separate system. | Architecture (ADR-0001), sign-in, data. | Mark, Yasmin | open |
-| AS-02 | The `esto-care-operations` GitHub repo is the version going live on 24 Nov. (It covers voids, rooms, income lost and compliance; housing benefit and "money loss" were not obvious in the code.) | Which codebase Phase 1 builds on. | ZACK | open |
+| AS-02 | The `esto-care-operations` GitHub repo is the version going live on 24 Nov. (It covers voids, rooms, income lost and compliance; housing benefit and "money loss" were not obvious in the code.) | Which codebase Phase 1 builds on. | ZACK | confirmed 2026-11-20 by ZACK: `esto-care-operations` is the live version, going live 2026-11-20 |
 | AS-03 | Scope for Phase 1 is the **South** only. | Number of services, recipients. | Mark | open |
 | AS-04 | Hamida's new trackers (Grange model) will be the same for every house and are the source of truth. | Tracker types in `config/rules.json`. | Hamida | open |
 | AS-05 | Thresholds: service manager at 7 days, head office at 14 days. | Escalation config only. | Mark, Hamida | open |

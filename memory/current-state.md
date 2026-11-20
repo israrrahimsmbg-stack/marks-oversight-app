@@ -25,6 +25,12 @@ review_every_days: 7
 | w/c 2026-11-23 | Receive Grange trackers (Hamida) and QA documents (Mark) | Zakir |
 | by 2026-11-27 | Hamida reviews COMPLIANCE_RULES; BRD v0.2 | Zakir, Hamida |
 
+## Update 2026-11-20 (ZACK)
+
+- **The Operations app goes live today, Fri 2026-11-20**, not Tue 24 Nov as earlier notes said (other docs still show 24 Nov: treat this line as correct and fix them when next edited).
+- ZACK has answered the repo question (AS-02): `esto-care-operations` is the live version. Not asked again.
+- Still open and **not to be chased**: whether IT's Microsoft sign-in rule applies to the Operations app (it uses its own passwords), M365 plan / SharePoint site / shared mailbox (ELICITATION G8). Raise only when it blocks work.
+
 ## Blockers / waiting on
 
 - **Platform decided 2026-11-20:** Power Apps + Power Automate on SharePoint (ADR-0002). Waiting on IT: M365 plan, environment (not Managed), SharePoint site, shared mailbox (ELICITATION G8).
