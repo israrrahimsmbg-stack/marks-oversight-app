@@ -48,6 +48,7 @@ Format: one section per decision. Status is `proposed`, `accepted`, `superseded 
 ## ADR-0007: Staff sign in with company Microsoft accounts (Entra ID)
 
 - **Status:** accepted (20 Nov 2026), IT requirement relayed by ZACK.
+- **Applies to the Operations app too** (confirmed by ZACK 2026-11-20). Its own-password sign-in does not meet the rule; resolution pending with IT.
 - **Consequences:** Mark's app cannot use the Operations app's own password accounts. Roles (director, service manager, deputy, team leader) should come from Entra ID groups or an app role table keyed by the Microsoft account, so leavers lose access when IT disables their account. The Monday email can go from a company mailbox via Microsoft Graph or Power Automate. The Operations app itself may need the same change: ask IT whether the rule applies to its go-live on 24 Nov.
 
 ## ADR-0008: The JavaScript rules engine is the reference; Power Platform must match it

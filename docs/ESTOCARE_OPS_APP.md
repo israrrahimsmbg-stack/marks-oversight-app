@@ -47,3 +47,7 @@ Per-home scoping (`inScope`) limits non-admins to their homes. **Gap for Mark's 
 3. Add `actions` and `updates` (append-only) collections.
 4. Extend the compliance editor so a manager can set owner + next step + date in two taps.
 5. Monday email via ADR-0003.
+
+## Sign-in rule applies (2026-11-20)
+
+ZACK confirmed IT's rule (company Microsoft accounts only) applies to this app as well. It currently uses its own PBKDF2 password accounts inside a Claude artifact. How this is resolved at or after go-live is for ZACK and IT; record the outcome here as an ADR when known.

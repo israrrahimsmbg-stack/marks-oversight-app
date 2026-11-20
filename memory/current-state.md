@@ -29,7 +29,8 @@ review_every_days: 7
 
 - **The Operations app goes live today, Fri 2026-11-20**, not Tue 24 Nov as earlier notes said (other docs still show 24 Nov: treat this line as correct and fix them when next edited).
 - ZACK has answered the repo question (AS-02): `esto-care-operations` is the live version. Not asked again.
-- Still open and **not to be chased**: whether IT's Microsoft sign-in rule applies to the Operations app (it uses its own passwords), M365 plan / SharePoint site / shared mailbox (ELICITATION G8). Raise only when it blocks work.
+- **Answered 2026-11-20 (ZACK): IT's Microsoft sign-in rule DOES apply to the Operations app**, which today uses its own password accounts and runs as a Claude artifact. Consequence for ZACK and IT to settle (not for us to chase): how the app is signed into on go-live, or whether it moves to the same Power Platform setup later. Do not claim the app meets the rule.
+- Still open and **not to be chased**: M365 plan / SharePoint site / shared mailbox (ELICITATION G8). Raise only when it blocks work.
 
 ## Blockers / waiting on
 
