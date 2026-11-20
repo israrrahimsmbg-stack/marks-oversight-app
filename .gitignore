@@ -8,3 +8,4 @@ data/live/
 *.xls
 *.csv
 !data/sample/*.csv
+*.zip

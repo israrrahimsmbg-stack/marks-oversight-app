@@ -1,7 +1,7 @@
 ---
 name: escalation-and-notifications
 description: Use when deciding or coding who is notified about overdue or missing compliance items, when, how often and through which channel (email, in-app, Teams), including leave cover and the support-worker exclusion.
-last_reviewed: 2026-11-19
+last_reviewed: 2026-11-20
 review_every_days: 60
 ---
 
@@ -30,6 +30,10 @@ Repeat every `repeat_reminder_days` (7) unless the level rises (send at once).
 - Instant head-office alert for critical reds (gas expired, fire alarm fault)? (ELICITATION D6.)
 - Channel: email via the company Microsoft 365 mailbox is the default assumption; Teams is possible via Graph.
 - Daily digest vs one email per item: prefer one digest per person per day to avoid alert fatigue.
+
+## On Power Platform
+
+Escalation runs in the daily Escalations flow (`docs/POWER_PLATFORM_DESIGN.md` §4). Support workers are excluded by design: the Services list only has ServiceManager, Deputy, TeamLeaders and DelegateWhenAway person columns. Send one digest per person per day from the shared mailbox.
 
 ## Implementation rules
 

@@ -38,11 +38,12 @@ Esto Care runs supported living and registered care services in the North and So
 1. **Start:** read `memory/MEMORY.md`, then `memory/current-state.md`, then the docs relevant to the task.
 2. **Requirements first.** Do not build big features on unconfirmed requirements. Small, reversible prototypes that help Mark react are fine.
 3. **No real personal data** in the repo, tests, commits, issues or prompts to external services. Use invented services ("Service A") and invented people.
-4. **Keep the rules engine pure:** `src/rules/` has no I/O, no UI, no dependencies, so it can move to whatever platform is chosen (see ADR-0001).
-5. **Every rule lives in two places that must match:** `config/rules.json` (machine) and `docs/COMPLIANCE_RULES.md` (human, with sources). `npm test` checks they match.
-6. **Dependencies:** add one only when it is needed now, has an OSI licence compatible with closed commercial use (MIT, Apache-2.0, BSD, ISC; not AGPL/GPL without a decision), and is recorded in `docs/RESEARCH.md` and `docs/DECISIONS.md`.
-7. **Support workers are never notified** by escalation (Mark's instruction, 18 Nov 2026).
-8. Write in plain British English for non-technical readers (Mark, managers).
+4. **Platform is Power Apps + Power Automate on SharePoint Lists** (ADR-0002), staff sign in with Microsoft accounts (ADR-0007). Use standard connectors only; no Dataverse, premium or custom connectors without an ADR (licence cost). Design: `docs/POWER_PLATFORM_DESIGN.md`.
+5. **Keep the rules engine pure:** `src/rules/` has no I/O, no UI, no dependencies, and is the reference the Power Platform flows must match (ADR-0008, `docs/RAG_ACCEPTANCE_SCENARIOS.md`).
+6. **Every rule lives in two places that must match:** `config/rules.json` (machine) and `docs/COMPLIANCE_RULES.md` (human, with sources). `npm test` checks they match.
+7. **Dependencies:** add one only when it is needed now, has an OSI licence compatible with closed commercial use (MIT, Apache-2.0, BSD, ISC; not AGPL/GPL without a decision), and is recorded in `docs/RESEARCH.md` and `docs/DECISIONS.md`.
+8. **Support workers are never notified** by escalation (Mark's instruction, 18 Nov 2026).
+9. Write in plain British English for non-technical readers (Mark, managers).
 
 ## 4. End of every session (mandatory)
 
@@ -62,6 +63,7 @@ Before you finish, run the `update-project-memory` skill. At minimum:
 npm test                 # node:test, no deps
 npm run report           # sample Monday report (synthetic data)
 npm run check:freshness  # flags docs/rules past their review date
+npm run export:tracker-types > tracker-types.csv  # rules → SharePoint TrackerTypes list
 ```
 
 ## 6. Skills in this repo

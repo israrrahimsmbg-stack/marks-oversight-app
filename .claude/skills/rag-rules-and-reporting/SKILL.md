@@ -1,7 +1,7 @@
 ---
 name: rag-rules-and-reporting
 description: Use when changing how items are rated Red/Amber/Green, the forward look, drill-down, the Monday weekly report or a daily summary, or the rules engine in src/rules.
-last_reviewed: 2026-11-19
+last_reviewed: 2026-11-20
 review_every_days: 60
 ---
 
@@ -25,6 +25,10 @@ review_every_days: 60
 | `src/rules/rag.js` | `rag(item, rule, today)` → `{status, due, daysOverdue, reason}`; `isManaged(item)` |
 | `src/rules/report.js` | `buildReport` (totals, byService, reds sorted unmanaged-first, forward buckets, changes) and `renderText` |
 | `scripts/weekly-report.mjs` | Sample report from synthetic data |
+
+## Platform (20 Nov 2026)
+
+The live app is Power Apps + Power Automate on SharePoint (`docs/POWER_PLATFORM_DESIGN.md`). RAG is written to each item nightly by a flow; the app shows a Power Fx copy of the same formula. Any change here must be made in **three** places and kept identical: `src/rules/` (with tests), the RAG refresh flow, and the Power Fx formula. Update `docs/RAG_ACCEPTANCE_SCENARIOS.md` and re-run the scenarios in the test lists.
 
 ## Invariants (tests enforce these; keep them)
 

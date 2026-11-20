@@ -5,11 +5,14 @@
   "description": "Management oversight and internal compliance app for Esto Care South (Mark's App). Draft.",
   "type": "module",
   "license": "UNLICENSED",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "test": "node --test \"tests/*.test.js\"",
     "report": "node scripts/weekly-report.mjs",
     "rules:doc": "node scripts/build-rules-doc.mjs",
-    "check:freshness": "node scripts/check-freshness.mjs"
+    "check:freshness": "node scripts/check-freshness.mjs",
+    "export:tracker-types": "node scripts/export-tracker-types.mjs"
   }
 }

@@ -27,6 +27,8 @@ It extends the existing **Esto Care Operations app** (Phase 0, going live Tue 24
 | [`docs/COMPLIANCE_RULES.md`](docs/COMPLIANCE_RULES.md) | Expiry and frequency rules per item type (**unverified until signed off**) |
 | [`docs/GLOSSARY.md`](docs/GLOSSARY.md) | Terms and acronyms |
 | [`docs/RESEARCH.md`](docs/RESEARCH.md) | Open-source libraries and tools considered, with licences and reasons |
+| [`docs/POWER_PLATFORM_DESIGN.md`](docs/POWER_PLATFORM_DESIGN.md) | **The build platform** (decided 20 Nov 2026): SharePoint lists, flows, Power Fx RAG formula, licensing guardrails |
+| [`docs/RAG_ACCEPTANCE_SCENARIOS.md`](docs/RAG_ACCEPTANCE_SCENARIOS.md) | Cases the flows and app must pass |
 | [`docs/ESTOCARE_OPS_APP.md`](docs/ESTOCARE_OPS_APP.md) | What the existing Operations app already does, and how this app fits on top |
 | [`memory/`](memory/MEMORY.md) | Project memory: stakeholders, meeting log, decisions, current state |
 | [`.claude/skills/`](.claude/skills) | Skills that load the right expertise for each kind of task |

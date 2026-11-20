@@ -12,6 +12,7 @@ review_every_days: 7
 
 - 2026-11-18 meeting with Mark; 2026-11-19 call with Yasmin and Hamida.
 - BRD draft v0.1 and elicitation questionnaire (Zakir).
+- 2026-11-20: Power Platform design, acceptance scenarios and TrackerTypes CSV export added.
 - This repo set up: plan, BRD, elicitation log, ADRs, compliance rules (24, all UNVERIFIED), research, skills, memory, tested rules engine and sample Monday report.
 
 ## Next
@@ -26,7 +27,7 @@ review_every_days: 7
 
 ## Blockers / waiting on
 
-- **Platform decision (ADR-0002):** Microsoft sign-in required (2026-11-20). Choose Azure web app (recommended) or Power Platform; need to know if the company has an Azure subscription IT will allow.
+- **Platform decided 2026-11-20:** Power Apps + Power Automate on SharePoint (ADR-0002). Waiting on IT: M365 plan, environment (not Managed), SharePoint site, shared mailbox (ELICITATION G8).
 - Does the Microsoft sign-in rule also apply to the Operations app going live 2026-11-24 (it uses its own passwords)?
 
 - Hamida's tracker set for one house (still finishing occupancy tracker).

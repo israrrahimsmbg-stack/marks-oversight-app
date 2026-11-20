@@ -1,6 +1,6 @@
 ---
 title: Open-source research: libraries, tools and repos
-last_reviewed: 2026-11-19
+last_reviewed: 2026-11-20
 review_every_days: 90
 ---
 
@@ -14,7 +14,11 @@ review_every_days: 90
 |---|---|
 | *Nothing.* Node's built-in `node:test` runs the tests; the rules engine has no dependencies. | Requirements are not confirmed. A pure engine drops into the existing single-file Operations app build without a bundler. |
 
-## Shortlist by need
+## Platform decided (20 Nov 2026)
+
+**Power Apps + Power Automate on SharePoint Lists** (ADR-0002). Most of the JavaScript libraries below now apply only to the reference engine and scripts, or if the platform changes later. What matters now: [Power Platform CLI (`pac`)](https://learn.microsoft.com/power-platform/developer/cli/introduction) for solution source control, standard connectors only (SharePoint, Office 365 Outlook, Office 365 Users, Teams, Excel Online), and Microsoft's licensing guide. Licensing notes: [Microsoft Learn](https://learn.microsoft.com/power-platform/admin/pricing-billing-skus); 2027 enforcement and price change: [SAMexpert, 6 Oct 2026](https://samexpert.com/power-apps-2027-enforcement-price-increase/).
+
+## Shortlist by need (reference engine / future options)
 
 ### Excel / CSV import (BR-11: Hamida's trackers, SharePoint exports)
 

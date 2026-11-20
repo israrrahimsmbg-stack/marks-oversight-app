@@ -95,6 +95,7 @@ When a question is answered: fill **Answer**, set **Status** to `answered (date,
 | G2 | Who is responsible for data accuracy and uploads? | | open |
 | G3 | Data retention and audit trail requirements; any GDPR concerns (service user data)? | | open |
 | G4 | Hosting preferences and IT approval needed? | | open |
+| G8 | (new) Which Microsoft 365 plan do staff have? Which Power Platform environment should we build in, and is it a Managed Environment? Can we have a SharePoint site and a shared mailbox for the report? | | open |
 | G5 | How many users and services at launch and in 12 months? | | open |
 | G6 | (new) Is a DPIA already in place for the Operations app, and who is the Data Protection Officer / IG lead? | | open |
 

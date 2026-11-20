@@ -10,6 +10,7 @@ Newest first. Architectural decisions are ADRs in `docs/DECISIONS.md`.
 
 | Date | Decision | Who | Source |
 |---|---|---|---|
+| 2026-11-20 | Platform: Power Apps + Power Automate on SharePoint Lists (ADR-0002). Standard connectors only to stay within Microsoft 365 licences. | ZACK (decision card) | thread 20 Nov |
 | 2026-11-20 | Staff must sign in with company Microsoft accounts (Entra ID). | IT, relayed by ZACK | thread message 20 Nov |
 | 2026-11-19 | Escalation goes to the service manager; Mark and Hamida are last resort; support workers are not notified. | Hamida (citing Mark) | 19 Nov transcript ~13:51, 15:13 |
 | 2026-11-19 | One standard set of trackers for every house; the Grange version is the model. | Hamida (Mark's wish) | 19 Nov transcript ~10:46, 16:24 |
