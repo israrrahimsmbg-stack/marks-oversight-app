@@ -30,7 +30,8 @@ review_every_days: 7
 - **The Operations app goes live today, Fri 2026-11-20**, not Tue 24 Nov as earlier notes said (other docs still show 24 Nov: treat this line as correct and fix them when next edited).
 - ZACK has answered the repo question (AS-02): `esto-care-operations` is the live version. Not asked again.
 - **Answered 2026-11-20 (ZACK): IT's Microsoft sign-in rule DOES apply to the Operations app**, which today uses its own password accounts and runs as a Claude artifact. Consequence for ZACK and IT to settle (not for us to chase): how the app is signed into on go-live, or whether it moves to the same Power Platform setup later. Do not claim the app meets the rule.
-- Still open and **not to be chased**: M365 plan / SharePoint site / shared mailbox (ELICITATION G8). Raise only when it blocks work.
+- **Answered 2026-11-20 (ZACK): all staff have Microsoft 365 Business Basic.** Probably enough for a SharePoint-only canvas app and standard-connector flows (Microsoft Q&A, Jan 2026), but not confirmed by an official licensing statement: test with a Business Basic-only user and check for diamond (premium) icons before go-live. Business Basic is web/mobile Office apps only, which is fine for this app.
+- Still open and **not to be chased**: (M365 plan now answered) / SharePoint site / shared mailbox (ELICITATION G8). Raise only when it blocks work.
 
 ## Blockers / waiting on
 

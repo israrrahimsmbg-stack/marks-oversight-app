@@ -20,7 +20,9 @@ Microsoft 365 business/enterprise licences include **limited** Power Apps and Po
 | Standard connectors only: SharePoint, Office 365 Outlook, Office 365 Users, Microsoft Teams, Excel Online (Business) | Premium connectors (e.g. HTTP, SQL, AI Builder), custom connectors, on-premises gateway |
 | Build in an environment that is **not** a Managed Environment | Managed Environments: from **Feb 2027** Microsoft will block users without a qualifying licence ([SAMexpert, 6 Oct 2026](https://samexpert.com/power-apps-2027-enforcement-price-increase/)) |
 
-**Ask IT (new ELICITATION G8):** which Microsoft 365 plan do staff have, which Power Platform environment should we use, and is it a Managed Environment? Premium list price rises from $20 to $22 per user per month on 1 Jan 2027, so staying on standard connectors matters.
+**Staff licence (ZACK, 20 Nov 2026): Microsoft 365 Business Basic for everyone.** Probably covers a SharePoint-only canvas app and standard flows ([Microsoft Q&A, Jan 2026](https://learn.microsoft.com/en-us/answers/questions/5750665/power-apps-requesting-license-with-microsoft-365-b): community guidance, not an official licensing statement). Before building much: make a tiny test app and flow on SharePoint, open it as a Business Basic-only user, and check nothing shows a diamond (premium) icon or a licence prompt.
+
+**Still to ask IT (ELICITATION G8, remaining parts):** which Microsoft 365 plan do staff have, which Power Platform environment should we use, and is it a Managed Environment? Premium list price rises from $20 to $22 per user per month on 1 Jan 2027, so staying on standard connectors matters.
 
 ## 2. SharePoint site and lists
 
