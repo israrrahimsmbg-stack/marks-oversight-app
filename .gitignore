@@ -9,3 +9,4 @@ data/live/
 *.csv
 !data/sample/*.csv
 *.zip
+prototype/dist/
