@@ -13,6 +13,7 @@
     "report": "node scripts/weekly-report.mjs",
     "rules:doc": "node scripts/build-rules-doc.mjs",
     "check:freshness": "node scripts/check-freshness.mjs",
-    "export:tracker-types": "node scripts/export-tracker-types.mjs"
+    "export:tracker-types": "node scripts/export-tracker-types.mjs",
+    "build:prototype": "node prototype/build.mjs"
   }
 }
