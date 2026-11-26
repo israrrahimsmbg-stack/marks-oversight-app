@@ -22,3 +22,4 @@ Newest first. Architectural decisions are ADRs in `docs/DECISIONS.md`.
 | 2026-11-18 | Phasing: finish Operations app first (live Tue 24 Nov), then Mark's app from w/c 23 Nov; start with compliance reporting, then the managers' tracker. | Yasmin, agreed by Mark | 18 Nov transcript ~8:33, 12:01 |
 | 2026-11-18 | Scope is eventually "everything" (finance, compliance, voids...), not only compliance. | Mark | 18 Nov transcript ~6:03 |
 | 2026-11-19 | Repo set up with rules as config (ADR-0004), no deps yet (ADR-0006). Phase 1 platform proposed as the Operations app (ADR-0001, needs confirming). | Zakir (with Claude) | this repo |
+- 2026-11-26: Settings (homes and modules, people, access matrix, alert timings) editable only by the director, compliance lead, operations and finance roles plus the system admin, following Mark's 24 Nov email. Head office can mark an action as a priority. Certificates and care records now alert like checks [UNVERIFIED timings].

@@ -102,6 +102,14 @@
       "rules_categories": ["fire", "property"]
     },
     {
+      "key": "care_records", "label": "Care records & reviews", "short": "CARE", "icon": "clipboard", "priority": "standard", "wave": 2,
+      "summary": "Support plans, individual risk assessments, local authority care reviews, support and funding packages and DoLS authorisations kept in date at each home (Yasmin, 19 Nov), rated by the tested rules engine.",
+      "tracker": "Care records tracker (per home; the live build reads review dates per resident)",
+      "basis": "mixed",
+      "basis_note": "Care Act 2014 reviews and DoLS authorisations are legal duties; support plan and risk assessment review frequencies are Esto Care policy. Each item shows its own basis and source from config/rules.json.",
+      "rules_categories": ["care_records"]
+    },
+    {
       "key": "infection_control", "label": "Infection control", "short": "IPC", "icon": "drop", "priority": "standard", "wave": 2,
       "summary": "Quarterly infection prevention and control audit. Softer alerts: a reminder 2 weeks and 1 week before, and the first alert only at 7 days late.",
       "tracker": "Infection Control Audit (Word form today; Hamida converting to Excel)",

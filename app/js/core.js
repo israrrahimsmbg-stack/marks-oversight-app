@@ -5,7 +5,7 @@
 const CFG = QA_CONFIG;
 const MODS = CFG.modules;
 const MOD = Object.fromEntries(MODS.map(m => [m.key, m]));
-const STORE_KEY = "esto-qa-demo-v1";
+const STORE_KEY = "esto-qa-demo-v2";
 
 /* ---------- DOM ---------- */
 function h(tag, attrs, ...kids){
@@ -73,7 +73,7 @@ function lsSet(k, v){ try { localStorage.setItem(k, v); return true; } catch(e){
    sample data. The shapes match the SharePoint lists in docs/QA_APP.md, so the live
    build swaps this store for SharePoint (Power Apps) without changing the screens. */
 let S = null;
-function load(){ const raw = lsGet(STORE_KEY); if (raw) try { S = JSON.parse(raw); if (S && S.v === 1) return; } catch(e){} S = seed(realToday()); save(); }
+function load(){ const raw = lsGet(STORE_KEY); if (raw) try { S = JSON.parse(raw); if (S && S.v === 2) return; } catch(e){} S = seed(realToday()); save(); }
 function save(){ lsSet(STORE_KEY, JSON.stringify(Object.assign({}, S, { ui: undefined }))); }
 function resetDemo(){ S = seed(realToday()); save(); location.hash = "#/dashboard"; toast("Demo data reset"); render(); }
 const today = () => S.session.today || realToday();

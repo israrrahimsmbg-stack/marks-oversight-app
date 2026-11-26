@@ -1,6 +1,6 @@
 ---
 title: QA & Compliance app (Mark's "QA App"): design, access and rollout
-status: DRAFT v0.1, working preview built 26 Nov 2026
+status: DRAFT v0.2, working preview built 26 Nov 2026, traceability check 26 Nov (docs/TRACEABILITY.md)
 owner: Zakir Hussain
 last_reviewed: 2026-11-26
 review_every_days: 14
@@ -30,6 +30,8 @@ Why not just ship the artifact: it would break IT's sign-in rule, and the Operat
 4. **Monday report (07:00):** one email to head office, home by home: checks not done, deficits, overdue actions and actions due in the next 7 days.
 5. **The app** is where people see their to-do list, answer checks (optional: the same questions as the tracker), manage actions and see the oversight screens.
 
+Every ask from the transcripts, BRD, questionnaire, emails, call and execution plan is mapped to a screen in [`TRACEABILITY.md`](TRACEABILITY.md).
+
 ## 3. Statuses (Hamida, 25 Nov 2026) [UNVERIFIED]
 
 | Status | Meaning |
@@ -44,7 +46,7 @@ Why not just ship the artifact: it would break IT's sign-in rule, and the Operat
 | Completed | Every question answered and submitted. "Not met" answers are **deficits**, never overdue |
 | Not applicable | With a reason |
 
-Action statuses: Not started, In progress, Awaiting evidence, Awaiting sign-off, Completed, On hold. Flags: **Deadline required** (no target date), **No owner**, **Overdue**, **Due in 7 days**, **Update due** (mid-point between identified and target date; 14 days for QA actions). Completing needs evidence, and someone other than the owner (manager or head office) signs it off.
+Action statuses: Not started, In progress, Awaiting evidence, Awaiting sign-off, Completed, On hold. Every action also has a **Next step** and a **Next step by** date (Mark, 18 Nov: "the system has to tell us what the next action is"). Flags: **No next step**, **Next step late**, **Head office priority**, **Deadline required** (no target date), **No owner**, **Overdue**, **Due in 7 days**, **Update due** (mid-point between identified and target date; 14 days for QA actions). Completing needs evidence, and someone other than the owner (manager or head office) signs it off.
 
 ## 4. Alerts [UNVERIFIED]
 
@@ -55,6 +57,8 @@ Action statuses: Not started, In progress, Awaiting evidence, Awaiting sign-off,
 | Repeat | Every day for 999 items (finance, medication, H&S, fire & certificates); every 2 to 3 days for others; weekly for infection control |
 | Escalated: 7 days late (14 for quarterly and infection control) | Everyone up the ladder to the service manager, plus director and compliance lead |
 | Action overdue | Owner + service manager every 3 days; head office from 14 days |
+| Action made a priority by head office | Owner + service manager the next day (Mark, 18 Nov: "why isn't this a priority?") |
+| Certificates, fire log, care records (rules engine) | Heads-up to the service manager 30, 14, 7 and 1 days before; out of date: service manager + deputy + module lead + head office (setting), daily for 999 items, every 3 days otherwise; escalated at 14 days |
 
 Fixed rules: alerts only for checks **not done**; one digest per person per day; support workers are never notified (Mark, 18 Nov); a home with nobody in a role (e.g. Hermitage, no deputy) sends that level to the next rung up; staff on leave are replaced by their named delegate; **shadow mode** homes alert only the app builder and the compliance lead.
 
@@ -68,6 +72,7 @@ Every module is switched on per home. Homes move Not started > Setting up > Shad
 | 1 | Medication (999) | 8-area weekly audit > monthly > quarterly; RAG green from 95% | Guidance (NICE NG67); frequency is policy |
 | 1 | Health & Safety, IronOak (999) | 19 weekly landlord property checks | Legal duty (FSO 2005, Gas Safety Regs, HHSRS); checklist is policy. Zara prefers to chase it herself: **included at ZACK's request, Mark to decide** |
 | 1 | Fire & certificates (999) | Fire log, drills, emergency lighting, gas, EICR, FRA and more, rated by `src/rules` from `config/rules.json` | Per item |
+| 2 | Care records & reviews | Support plans, risk assessments, council care reviews, funding packages and DoLS, per resident reference, rated by `src/rules` (Yasmin, 19 Nov) | Care Act 2014 and MCA 2005 duties; review frequencies are policy |
 | 2 | Infection control | Quarterly, softer alerts | Legal (H&SC Act 2008 Code of Practice); frequency is policy |
 | 2 | Maintenance | Friday update by the manager (replaces emailing the tracker); repairs past target in the Monday report | Policy; Reg 15 |
 | 2 | Occupancy | Monday and Friday update reminder; onboarding documents for new residents; head office only, references not names | Policy |
@@ -82,22 +87,22 @@ Module definitions, questions and timings: `config/qa-modules.json`. All timings
 
 Home team roles see only their own homes; head office roles see all homes. A module switched off at a home is hidden for everyone there. Editable in Admin > Who can do what.
 
-| Role | FIN | MED | H&S | FIRE | IPC | MNT | OCC | QA | SPOT | MMR | S&T |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| System admin (Zakir) | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage |
-| Director (Mark) | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage |
-| Compliance & QA lead (Hamida) | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage |
-| Operations & housing (Zara) | View | View | Manage | Manage | View | Manage | Manage | View | View | View | View |
-| Finance (Nafisa) | Manage | View | View | View | View | View | Manage | View | View | View | View |
-| Service manager | Record | Record | Record | Record | Record | Record | Record | Record | Record | Record | Record |
-| Deputy manager | Record | Record | Record | Record | Record | Record | None | Record | Record | View | View |
-| Team leader | Record | Record | Record | Record | Record | Record | None | View | None | None | None |
-| Viewer (auditor) | View | View | View | View | View | View | None | View | View | View | None |
+| Role | FIN | MED | H&S | FIRE | CARE | IPC | MNT | OCC | QA | SPOT | MMR | S&T |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| System admin (Zakir) | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage |
+| Director (Mark) | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage |
+| Compliance & QA lead (Hamida) | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage | Manage |
+| Operations & housing (Zara) | View | View | Manage | View | Manage | View | Manage | Manage | View | View | View | View |
+| Finance (Nafisa) | Manage | View | View | View | View | View | View | Manage | View | View | View | View |
+| Service manager | Record | Record | Record | Record | Record | Record | Record | Record | Record | Record | Record | Record |
+| Deputy manager | Record | Record | Record | Record | Record | Record | Record | None | Record | Record | View | View |
+| Team leader | Record | Record | Record | View | Record | Record | Record | None | View | None | None | None |
+| Viewer (auditor) | View | View | View | None | View | View | View | None | View | View | View | None |
 | Support worker | None, and never notified | | | | | | | | | | |
 
 **View** sees checks, results and actions. **Record** completes checks at your own level and below (team leaders weekly, deputies weekly and monthly, managers all) and updates actions. **Manage** also puts checks on hold, marks N/A, reopens, signs off and reassigns.
 
-App-wide permissions: switch homes and modules (system admin, director, compliance lead); add people and change roles, change the access matrix (system admin, director); change alert timings (plus compliance lead); sign off rules (compliance lead, director); receive the Monday report (head office); copied into every alert (director, compliance lead, finance); see resident and staff references (head office and service managers); activity log (system admin, director, compliance lead). This follows Mark's email of 24 Nov: only Mark, Nafisa, Hamida and Zara can change settings.
+App-wide permissions: switch homes and modules, add people and change roles, change the access matrix and change alert timings (system admin, director, compliance lead, operations, finance: Mark's "only Mark, Nafisa, Hamida and Zara can edit", 24 Nov); register tracker files (system admin, compliance lead); make an action a priority (head office); sign off rules (compliance lead, director); receive the Monday report (head office); copied into every alert (director, compliance lead, finance); see resident and staff references (head office and service managers); activity log (system admin, director, compliance lead). This follows Mark's email of 24 Nov: only Mark, Nafisa, Hamida and Zara can change settings.
 
 ## 7. SharePoint lists for the live build
 
@@ -105,13 +110,13 @@ App-wide permissions: switch homes and modules (system admin, director, complian
 |---|---|---|
 | Homes | Title, Order, Status (Not started / Setting up / Shadow / Live / Paused), Wave, QuarterStart, one Yes/No column per module, ServiceManager, Deputy, TeamLeaders (Person, multi) | `S.homes` |
 | People | Person (Microsoft account), Role, Homes (multi lookup), GetsAlerts, OnLeave, Delegate | `S.users` |
-| TrackerRegistry | Home, Module, File path, Table names, LastSynced | (sync only) |
+| TrackerRegistry | Home, Module, File path, Table names, LastSynced, StrayCopies | `S.registers.trackers` (Admin › Homes & modules) |
 | Checks | CheckId (`home|module|level|n`), Home, Module, Level, Period, Due, Answers (JSON), Answered, NotMet, Submitted, SubmittedBy/On, Evidence, OnHoldReason/Review, NA, Status, DaysLate, LastAlerted | `S.records` + `src/qa/schedule.js` |
-| Actions | Ref (HC-FIN-001), Home, Module, Source, Finding, Action, Priority, Owner, Identified, Target, UpdateDue, Status, Evidence, VerifiedBy/On, HoldReason/Review | `S.actions` |
+| Actions | Ref (HC-FIN-001), Home, Module, Source, Finding, Action, NextStep, NextStepDate, Priority, PrioritisedBy/On/Why, Owner, Identified, Target, UpdateDue, Status, Evidence, VerifiedBy/On, HoldReason/Review | `S.actions` |
 | ActionUpdates | Action, At, By, Text (append-only) | `action.comments` |
 | AccessMatrix, Capabilities | Role × module level; capability × roles | `S.matrix`, `S.caps` |
 | AlertSettings | Level, HeadsUp, OutstandingAfter, Repeat, Escalate; HeadOfficeFrom | `S.levels`, `S.settings` |
-| Registers | FireItems, CapacityRegister, Maintenance, Onboarding, StaffRegister (references only) | `S.registers` |
+| Registers | FireItems, CareRecords (per resident ref), Residents (refs only), CapacityRegister, Maintenance (+ comment history), Onboarding, StaffRegister (references only) | `S.registers` |
 | AlertLog, ReportLog, Activity | Audit trail of every email and change | `S.activity` |
 
 ## 8. Open decisions (also in ELICITATION.md, section Q)

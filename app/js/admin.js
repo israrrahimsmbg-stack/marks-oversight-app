@@ -18,7 +18,25 @@ function viewSetup(){
         h("td",null, sel(Object.entries(HOME_STATUS), hm.status, v => { hm.status = v; logAct(`${hm.name}: status set to ${HOME_STATUS[v]}`); save(); EV = null; render(); }, { disabled: !can ? true : null, "aria-label":"Status for " + hm.name })),
         h("td",null, h("input",{type:"date",value:hm.quarterStart,disabled: !can ? true : null,style:"width:auto;padding:4px 6px;font-size:12px",onchange:e => { if (new Date(e.target.value + "T00:00:00Z").getUTCDay() !== 1) return toast("The quarter must start on a Monday."), render(); hm.quarterStart = e.target.value; logAct(`${hm.name}: quarter start set to ${e.target.value}`); save(); EV = null; render(); }})),
         MODS.map(m => h("td",null, toggle(hm.modules[m.key], v => { hm.modules[m.key] = v; logAct(`${hm.name}: ${m.label} switched ${v ? "on" : "off"}`); save(); EV = null; render(); }, !can, `${m.label} at ${hm.name}`)))))))), { raw:true }),
-    h("div",{class:"legend2"}, Object.entries(HOME_STATUS).map(([k,v]) => h("span",{class:"r-" + k}, h("i",{style:"background:var(--ss);border-color:var(--sc)"}), `${v}: ${HOME_STATUS_HINT[k]}`))));
+    h("div",{class:"legend2"}, Object.entries(HOME_STATUS).map(([k,v]) => h("span",{class:"r-" + k}, h("i",{style:"background:var(--ss);border-color:var(--sc)"}), `${v}: ${HOME_STATUS_HINT[k]}`))),
+    trackerRegister());
+}
+
+/* ---------- tracker register: one tracker per home per area, fixed paths (Mark, 25 Nov) ---------- */
+function trackerRegister(){
+  const can = cap("trackers");
+  const rows = (S.registers.trackers || []).filter(x => homeFilterIds().includes(x.homeId)).sort((a,b) => S.homes[a.homeId].order - S.homes[b.homeId].order);
+  const t = today();
+  const stale = x => diffD(x.lastSynced.slice(0,10), t) > 1;
+  const edit = x => { const path = h("input",{type:"text",value:x.path}); openModal("Tracker file", [h("p",{class:"meta",text:`${S.homes[x.homeId].name} · ${MOD[x.module].label}. The nightly sync reads only this file. Its data must be in named Excel tables.`}), field("Path on HomesCentral", path),
+    h("div",{class:"acts"}, h("button",{type:"button",class:"btn ghost",onclick:closeModal,text:"Cancel"}), h("button",{type:"button",class:"btn",text:"Save",onclick:()=>{ x.path = path.value.trim(); logAct(`Tracker for ${S.homes[x.homeId].name} · ${MOD[x.module].label} set to ${x.path}`); save(); closeModal(); render(); }}))]); };
+  return card("Tracker files", rows.length ? h("div",{class:"tw"}, h("table",{class:"t"},
+    h("thead",null, h("tr",null, ["Home","Area","File","Last synced","Check",""].map(x => h("th",{text:x})))),
+    h("tbody",null, rows.map(x => h("tr",null, h("td",{text:S.homes[x.homeId].name}), h("td",{text:MOD[x.module].label}), h("td",null, h("code",{style:"font-size:12px;word-break:break-all",text:x.path}), h("div",{class:"meta",text:"Tables: " + x.tables})),
+      h("td",{text:tl(x.lastSynced)}),
+      h("td",null, x.copies.length ? h("span",{class:"flag",title:x.copies.join("\n"),text:`${nplural(x.copies.length, "stray copy", "stray copies")} found`}) : stale(x) ? h("span",{class:"flag warn",text:"Not synced last night"}) : spill("complete","OK")),
+      h("td",null, can ? h("button",{type:"button",class:"btn ghost sm",onclick:()=>edit(x),text:"Change"}) : null)))))) : empty("No trackers registered yet. A home's trackers are registered when it moves to Setting up."),
+    { raw:true, sub:"Staff keep working in these Excel files. Each night at 02:00 the sync reads them into the app; a weekly check flags copies or renamed files, because only one tracker per home per area is allowed (Mark, 25 Nov)." });
 }
 
 /* ---------- people ---------- */
@@ -115,7 +133,7 @@ function viewLibrary(){
       m.source_url ? h("div",{class:"meta"}, "Source: ", h("a",{href:m.source_url,target:"_blank",rel:"noopener",text:m.source_url})) : null,
       m.tracker ? h("div",{class:"meta",text:"Tracker: " + m.tracker}) : null,
       Object.keys(m.checks || {}).map(lvl => h("details",null, h("summary",{style:"cursor:pointer;font-weight:650",text:`${levelLabel(lvl)}: ${QA.questionsFor(m, lvl).length} questions · owner ${roleLabel(QA.ownerRole(m, lvl, cfgNow(), null))}`}), h("ol",{class:"steps",style:"margin-top:8px"}, QA.questionsFor(m, lvl).map(q => h("li",{text:q.q}))))),
-      m.key === "fire_property" ? h("div",{class:"meta",text:`${RULES_CONFIG.rules.filter(r => m.rules_categories.includes(r.category)).length} items from config/rules.json, each with its own legal reference.`}) : null,
+      m.rules_categories ? h("div",{class:"meta",text:`${RULES_CONFIG.rules.filter(r => m.rules_categories.includes(r.category)).length} items from config/rules.json, each with its own legal reference.`}) : null,
       sign && !so ? h("div",null, h("button",{type:"button",class:"btn soft sm",onclick:()=>{ S.signoff[m.key] = { by:me().id, on:today() }; logAct(`Signed off ${m.label} checks and timings`); save(); render(); },text:"Sign off this module"})) : null)); }));
 }
 

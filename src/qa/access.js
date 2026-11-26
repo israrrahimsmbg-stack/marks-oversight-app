@@ -27,7 +27,7 @@ export const ROLES = {
 export const ROLE_ORDER = Object.keys(ROLES);
 export const HEAD_OFFICE = ["super_admin", "director", "head_compliance", "operations", "finance"];
 
-const M = (v, over = {}) => ({ finance: v, medication: v, health_safety: v, fire_property: v, infection_control: v, maintenance: v, occupancy: v, qa_audit: v, spot_checks: v, manager_report: v, supervision_training: v, ...over });
+const M = (v, over = {}) => ({ finance: v, medication: v, health_safety: v, fire_property: v, care_records: v, infection_control: v, maintenance: v, occupancy: v, qa_audit: v, spot_checks: v, manager_report: v, supervision_training: v, ...over });
 
 /** Default module access per role. Editable in Admin › Access (saved per organisation). */
 export const DEFAULT_MATRIX = {
@@ -38,17 +38,20 @@ export const DEFAULT_MATRIX = {
   finance:         M("view", { finance: "manage", occupancy: "manage" }),
   service_manager: M("record", { qa_audit: "record", supervision_training: "record", occupancy: "record" }),
   deputy_manager:  M("record", { manager_report: "view", occupancy: "none", supervision_training: "view" }),
-  team_leader:     M("record", { manager_report: "none", occupancy: "none", supervision_training: "none", qa_audit: "view", spot_checks: "none" }),
-  viewer:          M("view", { occupancy: "none", supervision_training: "none" }),
+  team_leader:     M("record", { manager_report: "none", occupancy: "none", supervision_training: "none", qa_audit: "view", spot_checks: "none", care_records: "view" }),
+  viewer:          M("view", { occupancy: "none", supervision_training: "none", care_records: "none" }),
   support_worker:  M("none"),
 };
 
 /** App-wide capabilities, separate from module access. */
 export const CAPABILITIES = {
-  configure:    { label: "Switch homes and modules on or off", roles: ["super_admin", "director", "head_compliance"] },
-  users:        { label: "Add people and change their roles", roles: ["super_admin", "director"] },
-  matrix:       { label: "Change this access matrix", roles: ["super_admin", "director"] },
-  alert_rules:  { label: "Change alert timings", roles: ["super_admin", "director", "head_compliance"] },
+  // Mark, 24 Nov: "only Mark, Nafisa, Hamida and Zara can edit" the settings
+  configure:    { label: "Switch homes and modules on or off", roles: ["super_admin", "director", "head_compliance", "operations", "finance"] },
+  users:        { label: "Add people and change their roles", roles: ["super_admin", "director", "head_compliance", "operations", "finance"] },
+  matrix:       { label: "Change this access matrix", roles: ["super_admin", "director", "head_compliance", "operations", "finance"] },
+  alert_rules:  { label: "Change alert timings", roles: ["super_admin", "director", "head_compliance", "operations", "finance"] },
+  trackers:     { label: "Register tracker files (one per home per area)", roles: ["super_admin", "head_compliance"] },
+  prioritise:   { label: "Make an action a priority (head office challenge)", roles: ["super_admin", "director", "head_compliance", "operations", "finance"] },
   rules_signoff:{ label: "Sign off compliance rules and timings", roles: ["head_compliance", "director"] },
   monday:       { label: "Receive the Monday report", roles: ["director", "head_compliance", "finance", "operations", "super_admin"] },
   all_alerts:   { label: "Copied into every alert (Mark's rule)", roles: ["director", "head_compliance", "finance"] },

@@ -6,6 +6,22 @@ review_every_days: 7
 
 # Current state (as of 2026-11-26)
 
+## Update 2026-11-26 (later): traceability check
+
+- ZACK asked whether all notes, history and purpose were used. Every ask is now mapped in `docs/TRACEABILITY.md`.
+- 14 gaps were fixed in the same PR:
+  - care records module (support plans, risk assessments, reviews, funding, DoLS, per resident)
+  - action next step and date
+  - head office "make this a priority"
+  - home RAG, plus out of date / coming up / in date in the Monday report
+  - forward look at 21 and 90 days, including certificates
+  - alerts for certificates and care records
+  - review pack per home
+  - maintenance comment history
+  - tracker files register with a stray-copy flag
+  - settings editable by Mark, Nafisa, Hamida and Zara's roles
+- New questions Q9 to Q11.
+
 ## Update 2026-11-26: QA app preview built
 
 - Mark announced the "QA App" (email 25 Nov), rolling out home by home from **Hall Close** (now the pilot, not the Grange).

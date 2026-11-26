@@ -39,7 +39,7 @@ function viewHome(id, tabKey){
   else { const m = MOD[tab]; body = moduleAtHome(hm, m); }
   return h("div",{class:"page"},
     h("div",{class:"crumbs"}, link("Homes", "#/homes"), "›", h("span",{text:hm.name})),
-    phead(`#${hm.order} in rollout · ${HOME_STATUS[hm.status]}`, hm.name, hm.notes || HOME_STATUS_HINT[hm.status]),
+    phead(`#${hm.order} in rollout · ${HOME_STATUS[hm.status]}`, hm.name, hm.notes || HOME_STATUS_HINT[hm.status], RUNNING.includes(hm.status) && cap("export") ? [h("button",{type:"button",class:"btn ghost",onclick:()=>reviewPack(hm)}, icon("report"), "Review pack")] : null),
     h("div",{class:"tabs",role:"tablist"}, tabs.map(([k,l]) => h("button",{type:"button",role:"tab","aria-selected":String(k === tab),onclick:()=>go(`#/home/${id}/${k}`),text:l}))),
     body);
 }
@@ -50,7 +50,7 @@ function moduleSummary(homeId, m){
   const acts = Object.values(S.actions).filter(a => a.homeId === homeId && a.module === m.key && QA.actionFlags(a, t).open);
   const parts = [];
   if (m.chain) parts.push(h("div",{class:"meta",text:`${late ? nplural(late, "check") + " not done" : "All due checks done"} · ${nplural(def, "audit")} with deficits this quarter · ${nplural(acts.length, "open action")}`}));
-  if (m.key === "fire_property") { const f = ev().fire.filter(x => x.home.id === homeId); const red = f.filter(x => ["RED","NOT_RECORDED"].includes(x.rag.status)).length; parts.push(h("div",{class:"meta",text:`${f.length} items · ${red} not in date · ${f.filter(x => x.rag.status === "AMBER").length} due soon`})); }
+  if (m.rules_categories) { const f = ev().fire.filter(x => x.home.id === homeId && x.module.key === m.key); const red = f.filter(x => ["RED","NOT_RECORDED"].includes(x.rag.status)).length; parts.push(h("div",{class:"meta",text:`${f.length} items · ${red} not in date · ${f.filter(x => x.rag.status === "AMBER").length} due soon`})); }
   if (m.key === "supervision_training") parts.push(h("div",{class:"meta",text:`${registerIssues(homeId, m.key)} supervisions or training items overdue`}));
   if (m.key === "finance") { const cap2 = S.registers.capacity.filter(c => c.homeId === homeId); const bad = cap2.filter(c => !c.held || c.review < t).length; parts.push(h("div",{class:"meta",text:`Capacity & best-interest register: ${bad ? bad + " missing or out of date" : "all in date"}`})); }
   if (m.key === "maintenance") { const mm = S.registers.maintenance.filter(x => x.homeId === homeId && x.status !== "Completed"); parts.push(h("div",{class:"meta",text:`${mm.length} open repairs · ${mm.filter(x => x.target < t).length} past target`})); }
@@ -64,7 +64,7 @@ function moduleAtHome(hm, m){
   parts.push(h("div",{class:"banner info"}, icon(m.icon,18), h("div",null, m.summary, " ", basis(m.basis), " ", unverified(), h("div",{class:"meta",style:"margin-top:4px",text:m.basis_note}))));
   if (m.chain) parts.push(card("This quarter", h("div",{class:"chain"}, chainStrip(hm.id, m), LEGEND()), { sub:`Quarter from ${dlong(hm.quarterStart)}. Tap a square to open the check.` }));
   if (m.chain) { const list = ev().all.filter(e => e.home.id === hm.id && e.module.key === m.key && e.status.daysLate >= -14 && !["complete","na","upcoming"].includes(e.status.state)); if (list.length) parts.push(card("Open now", h("div",{class:"list"}, list.map(e => checkRow(e, { noHome:true }))), { raw:true })); }
-  if (m.key === "fire_property") parts.push(fireTable(hm.id));
+  if (m.rules_categories) parts.push(fireTable(hm.id, null, m));
   if (m.key === "finance") parts.push(capacityTable(hm.id));
   if (m.key === "maintenance") parts.push(maintenanceTable(hm.id));
   if (m.key === "occupancy") parts.push(onboardingTable(hm.id));
@@ -84,7 +84,7 @@ function viewModule(key){
   const body = [];
   body.push(h("div",{class:"banner info"}, icon(m.icon,18), h("div",null, m.summary, " ", basis(m.basis), " ", unverified(), h("div",{class:"meta",style:"margin-top:4px",text:m.basis_note}), m.source_url ? h("div",{class:"meta"}, "Source: ", h("a",{href:m.source_url,target:"_blank",rel:"noopener",text:m.source_url.replace(/^https?:\/\//,"")})) : null)));
   if (m.chain) body.push(card("By home, this quarter", h("div",{class:"chain"}, hs.length ? hs.map(hm => h("div",{style:"display:flex;flex-direction:column;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--line)"}, h("div",{class:"row"}, h("b",null, h("a",{href:`#/home/${hm.id}/${key}`,style:"color:inherit",text:hm.name})), hm.status === "shadow" ? h("span",{class:"pill p-ref",text:"shadow"}) : null), chainStrip(hm.id, m))) : empty("No running homes have this module switched on."), LEGEND())));
-  if (key === "fire_property") hs.forEach(hm => body.push(fireTable(hm.id, hm.name)));
+  if (m.rules_categories) hs.forEach(hm => body.push(fireTable(hm.id, hm.name, m)));
   if (key === "finance") hs.forEach(hm => body.push(capacityTable(hm.id, hm.name)));
   if (key === "maintenance") hs.forEach(hm => body.push(maintenanceTable(hm.id, hm.name)));
   if (key === "occupancy") hs.forEach(hm => body.push(onboardingTable(hm.id, hm.name)));
@@ -97,23 +97,29 @@ function viewModule(key){
 
 /* ---------- registers ---------- */
 const RAGTXT = { RED:["outstanding","Red"], AMBER:["due_soon","Due soon"], GREEN:["complete","In date"], NOT_RECORDED:["outstanding","Not recorded"], NA:["na","N/A"] };
-function fireTable(homeId, title){
-  const rows = ev().fire.filter(x => x.home.id === homeId);
-  const editable = QA.atLeast(access("fire_property", homeId), "record");
-  return card(title ? `${title}: fire & certificates` : "Fire log and certificates", h("div",{class:"tw"}, h("table",{class:"t"},
-    h("thead",null, h("tr",null, ["Item","Basis","Last done","Expires / due","Status",""].map(x => h("th",{text:x})))),
+function fireTable(homeId, title, m){
+  m = m || MOD.fire_property;
+  const rows = ev().fire.filter(x => x.home.id === homeId && x.module.key === m.key);
+  const editable = QA.atLeast(access(m.key, homeId), "record");
+  const perPerson = rows.some(x => x.ref);
+  const showRefs = cap("personal") || QA.atLeast(access(m.key, homeId), "record");
+  const name = m.key === "fire_property" ? "Fire log and certificates" : m.label;
+  return card(title ? `${title}: ${name.toLowerCase()}` : name, h("div",{class:"tw"}, h("table",{class:"t"},
+    h("thead",null, h("tr",null, [perPerson ? "Resident ref" : null,"Item","Basis","Last done","Expires / due","Status",""].filter(Boolean).map(x => h("th",{text:x})))),
     h("tbody",null, rows.sort((a,b) => ["RED","NOT_RECORDED","AMBER","GREEN","NA"].indexOf(a.rag.status) - ["RED","NOT_RECORDED","AMBER","GREEN","NA"].indexOf(b.rag.status)).map(x => h("tr",null,
+      perPerson ? h("td",{text: showRefs ? (x.ref || "Home") : "Hidden"}) : null,
       h("td",null, h("b",{text:x.rule.label}), h("div",{class:"meta",text:x.rule.legal_ref})), h("td",null, basis(x.rule.basis)), h("td",{text:x.item.last_done ? dl(x.item.last_done, { year:"numeric" }) : "–"}), h("td",{text:x.rag.due ? dl(x.rag.due, { year:"numeric" }) : "–"}),
       h("td",null, spill(RAGTXT[x.rag.status][0], RAGTXT[x.rag.status][1]), h("div",{class:"meta",text:x.rag.reason})),
-      h("td",null, editable && x.rag.status !== "NA" ? h("button",{type:"button",class:"btn ghost sm",onclick:()=>recordFire(homeId, x.rule),text:"Record"}) : null)))))),
-    { raw:true, sub:"Rated by the tested rules engine (config/rules.json). Every rule is UNVERIFIED until the compliance lead signs it off." });
+      h("td",null, editable && x.rag.status !== "NA" ? h("button",{type:"button",class:"btn ghost sm",onclick:()=>recordFire(homeId, x.rule, x.key, x.ref),text:"Record"}) : null)))))),
+    { raw:true, sub:(perPerson ? "One row per resident (references only, never names). " : "") + "Rated by the tested rules engine (config/rules.json). Every rule is UNVERIFIED until the compliance lead signs it off." });
 }
-function recordFire(homeId, rule){
-  const cur = (S.registers.fire[homeId] || {})[rule.key] || {};
+function recordFire(homeId, rule, key, ref){
+  key = key || rule.key;
+  const cur = (S.registers.fire[homeId] || {})[key] || {};
   const last = h("input",{type:"date",value:today()});
   const exp = h("input",{type:"date",value: rule.kind === "certificate" ? QA.addInterval(today(), rule.interval) : ""});
-  openModal("Record: " + rule.label, [h("p",{class:"meta",text:rule.legal_ref}), field(rule.kind === "certificate" ? "Date of inspection / certificate" : "Date done", last), rule.kind === "certificate" ? field("Expires", exp, "check it against the certificate") : null,
-    h("div",{class:"acts"}, h("button",{type:"button",class:"btn ghost",onclick:closeModal,text:"Cancel"}), h("button",{type:"button",class:"btn",text:"Save",onclick:()=>{ S.registers.fire[homeId] = S.registers.fire[homeId] || {}; S.registers.fire[homeId][rule.key] = Object.assign({}, cur, { last_done:last.value, expires: rule.kind === "certificate" ? exp.value : undefined }); logAct(`Recorded ${rule.label} at ${S.homes[homeId].name}`); save(); EV = null; closeModal(); render(); }}))]);
+  openModal("Record: " + rule.label + (ref ? " · " + ref : ""), [h("p",{class:"meta",text:rule.legal_ref}), field(rule.kind === "certificate" ? "Date of inspection / certificate" : "Date done", last), rule.kind === "certificate" ? field("Expires", exp, "check it against the certificate") : null,
+    h("div",{class:"acts"}, h("button",{type:"button",class:"btn ghost",onclick:closeModal,text:"Cancel"}), h("button",{type:"button",class:"btn",text:"Save",onclick:()=>{ S.registers.fire[homeId] = S.registers.fire[homeId] || {}; S.registers.fire[homeId][key] = Object.assign({}, cur, { last_done:last.value, expires: rule.kind === "certificate" ? exp.value : undefined }); logAct(`Recorded ${rule.label}${ref ? " for " + ref : ""} at ${S.homes[homeId].name}`); save(); EV = null; closeModal(); render(); }}))]);
 }
 function capacityTable(homeId, title){
   const t = today();
@@ -129,10 +135,26 @@ function maintenanceTable(homeId, title){
   const rows = S.registers.maintenance.filter(x => x.homeId === homeId);
   const upd = ev().all.filter(e => e.home.id === homeId && e.module.key === "maintenance" && e.status.daysLate >= 0).slice(-1)[0];
   return card(title ? `${title}: maintenance tracker` : "Maintenance tracker", h("div",{class:"tw"}, h("table",{class:"t"},
-    h("thead",null, h("tr",null, ["Ref","Issue","Area","Priority","Reported","Target","Who","Status"].map(x => h("th",{text:x})))),
-    h("tbody",null, rows.map(x => h("tr",null, h("td",{text:x.ref}), h("td",null, h("b",{text:x.issue})), h("td",{text:x.area}), h("td",{text:x.priority}), h("td",{text:dl(x.reported)}), h("td",{text:dl(x.target)}), h("td",{text:x.who}),
-      h("td",null, spill(x.status === "Completed" ? "complete" : x.target < t ? "outstanding" : "in_progress", x.status === "Completed" ? "Completed" : x.target < t ? `${x.status} · past target` : x.status))))))),
-    { raw:true, sub: `Managers update this every Friday instead of emailing it round; operations reviews it fortnightly. Last Friday update: ${upd ? QA.STATE_LABEL[upd.status.state].toLowerCase() : "–"}.` });
+    h("thead",null, h("tr",null, ["Ref","Issue","Area","Priority","Reported","Target","Who","Status","Updates"].map(x => h("th",{text:x})))),
+    h("tbody",null, rows.map(x => h("tr",null, h("td",{text:x.ref}), h("td",null, h("b",{text:x.issue}), (x.comments || []).length ? h("div",{class:"meta",text:"Latest: " + x.comments[x.comments.length - 1].text}) : null), h("td",{text:x.area}), h("td",{text:x.priority}), h("td",{text:dl(x.reported)}), h("td",{text:dl(x.target)}), h("td",{text:x.who}),
+      h("td",null, spill(x.status === "Completed" ? "complete" : x.target < t ? "outstanding" : "in_progress", x.status === "Completed" ? "Completed" : x.target < t ? `${x.status} · past target` : x.status)),
+      h("td",null, h("button",{type:"button",class:"btn ghost sm",onclick:()=>repairHistory(x.id),text:`History (${(x.comments || []).length})`}))))))),
+    { raw:true, sub: `Managers update this every Friday instead of emailing it round; operations reviews it fortnightly, and everyone can see the comment history (Zara, 25 Nov). Last Friday update: ${upd ? QA.STATE_LABEL[upd.status.state].toLowerCase() : "–"}.` });
+}
+function repairHistory(id){
+  const x = S.registers.maintenance.find(r => r.id === id); if (!x) return;
+  const can = QA.atLeast(access("maintenance", x.homeId), "record");
+  const note = h("textarea",{placeholder:"What has happened since the last update? (kept in the history)",style:"min-height:60px"});
+  const st = sel(["Open","Awaiting contractor","In progress","Completed"].map(v => [v, v]), x.status, () => {});
+  openModal(`${x.ref} · ${x.issue}`, [
+    h("div",{class:"meta",text:`${x.area} · ${x.priority} priority · reported ${dl(x.reported)} · target ${dl(x.target)} · ${x.who}`}),
+    (x.comments || []).length ? h("div",{class:"comments"}, x.comments.slice().reverse().map(c => h("div",{class:"comment"}, h("small",{text:`${uname(c.by)} · ${tl(c.at)}`}), c.text))) : empty("No updates yet."),
+    can ? h("div",{class:"fgrid"}, field("Status", st)) : null, can ? field("Add an update", note) : null,
+    h("div",{class:"acts"}, h("button",{type:"button",class:"btn ghost",onclick:closeModal,text: can ? "Cancel" : "Close"}), can ? h("button",{type:"button",class:"btn",text:"Save update",onclick:()=>{
+      const txt = note.value.trim(), ns = st.value;
+      if (!txt && ns === x.status) return toast("Write an update or change the status.");
+      x.comments = (x.comments || []).concat(txt ? [{ at:new Date().toISOString(), by:me().id, text:txt }] : [], ns !== x.status ? [{ at:new Date().toISOString(), by:me().id, text:`Status: ${x.status} › ${ns}` }] : []);
+      x.status = ns; logAct(`Updated repair ${x.ref} at ${S.homes[x.homeId].name}`); save(); EV = null; closeModal(); toast("Saved"); render(); }}) : null)], { wide:true, sub:"Comment history for this repair" });
 }
 function onboardingTable(homeId, title){
   const rows = S.registers.onboarding.filter(x => x.homeId === homeId);
@@ -168,4 +190,25 @@ function teamPanel(hm){
       sws.length ? h("div",{class:"banner"}, icon("lock",18), h("div",{text:`${nplural(sws.length, "support worker")} at this home: never notified and no access (Mark, 18 Nov 2026).`})) : null)),
     card("People with access to this home", h("div",{class:"tw"}, h("table",{class:"t"}, h("thead",null, h("tr",null, ["Name","Role","Alerts"].map(x => h("th",{text:x})))),
       h("tbody",null, Object.values(S.users).filter(u => QA.inHome(u, hm.id) && QA.ROLES[u.role].scope === "assigned").map(u => h("tr",null, h("td",{text:u.name}), h("td",{text:roleLabel(u.role)}), h("td",{text: u.role === "support_worker" ? "Never" : u.alerts ? "Yes" : "Off"})))))), { raw:true, right: cap("users") ? h("a",{class:"btn ghost sm",href:"#/admin/people",text:"Manage people"}) : null }));
+}
+
+/* ---------- review pack: one home on one page, for the monthly review day (Mark, 25 Nov) ---------- */
+function reviewPack(hm){
+  const t = today();
+  const rep = QA.mondayReport({ homes:{ [hm.id]:hm }, evaluated: ev().all.filter(e => e.home.id === hm.id && access(e.module.key, hm.id) !== "none"), actions: Object.values(S.actions).filter(a => a.homeId === hm.id && access(a.module, hm.id) !== "none"), today:t, rated: ev().fire.filter(x => x.home.id === hm.id && access(x.module.key, hm.id) !== "none") });
+  const r = rep.rows[0];
+  const L = [`Review pack · ${hm.name} · ${t}`, `Overall: ${r.rag} · ${HOME_STATUS[hm.status]}`, ""];
+  for (const m of MODS.filter(x => hm.modules[x.key] && access(x.key, hm.id) !== "none")) {
+    const list = ev().all.filter(e => e.home.id === hm.id && e.module.key === m.key && e.status.daysLate >= 0);
+    const done = list.filter(e => e.status.state === "complete").length, late = list.filter(isLate).length, def = list.filter(e => e.status.state === "complete" && e.status.tally.bad).length;
+    const reg = ev().fire.filter(x => x.home.id === hm.id && x.module.key === m.key);
+    L.push(`${m.label}: ${m.chain ? (list.length ? `${done} of ${list.length} due checks done this quarter, ${late} not done, ${def} with deficits` : "nothing due yet this quarter") : ""}${reg.length ? `${reg.filter(x => x.rag.status === "GREEN").length} of ${reg.length} items in date` : ""}`);
+  }
+  L.push("", "Not done:", ...r.outstanding.map(e => `  - ${checkTitle(e)} · ${e.status.reason}`), "Out of date:", ...r.registerRed.map(x => `  - ${ratedLabel(x)} · ${x.rag.reason}`),
+    "Deficits (last 4 weeks):", ...r.deficits.map(e => `  - ${checkTitle(e)}: ${e.status.tally.badItems.join("; ")}`), "", "Open actions:");
+  Object.values(S.actions).filter(a => a.homeId === hm.id && QA.actionFlags(a, t).open).forEach(a => { const f = QA.actionFlags(a, t); L.push(`  - ${a.ref} ${a.finding} · ${a.status} · owner ${uname(a.ownerId)} · target ${a.target || "none"}${f.overdue ? ` (${f.daysOver} days over)` : ""} · next step: ${a.nextStep ? a.nextStep + (a.nextStepDate ? " by " + a.nextStepDate : "") : "not set"}`); });
+  const txt = L.join("\n");
+  openModal(`Review pack: ${hm.name}`, [h("p",{class:"meta",text:"Everything for this home on one page, for the monthly review day. Print it or download it to attach to the review notes."}), h("pre",{class:"mail",text:txt}),
+    h("div",{class:"acts"}, h("button",{type:"button",class:"btn ghost",onclick:closeModal,text:"Close"}), h("button",{type:"button",class:"btn ghost",onclick:()=>window.print()}, icon("print"), "Print"), h("button",{type:"button",class:"btn",onclick:()=>download(`review-pack-${hm.id}-${t}.txt`, txt)}, icon("dl"), "Download"))], { wide:true });
+  logAct(`Opened the review pack for ${hm.name}`);
 }

@@ -19,14 +19,22 @@ function evaluate(){
     }
   }
   const byId = Object.fromEntries(all.map(e => [e.check.id, e]));
-  // fire & certificates via the tested rules engine (src/rules)
+  // register items rated by the tested rules engine (src/rules): fire & certificates, care records.
+  // "Per person" rules are rated once per resident reference.
   const fire = [];
   for (const hm of homesSorted()) {
-    if (!RUNNING.includes(hm.status) || !hm.modules.fire_property) continue;
-    for (const r of RULES_CONFIG.rules.filter(x => (MOD.fire_property.rules_categories || []).includes(x.category))) {
-      const rule = QA.withDefaults(r, RULES_CONFIG.defaults);
-      const item = (S.registers.fire[hm.id] || {})[r.key] || {};
-      fire.push({ home:hm, rule, item, rag: QA.rag(item, rule, t) });
+    if (!RUNNING.includes(hm.status)) continue;
+    for (const m of MODS.filter(x => x.rules_categories && hm.modules[x.key])) {
+      for (const r of RULES_CONFIG.rules.filter(x => m.rules_categories.includes(x.category))) {
+        const rule = QA.withDefaults(r, RULES_CONFIG.defaults);
+        const perPerson = /^per person/.test(r.applies_to || "");
+        const refs = perPerson ? ((S.registers.residents || {})[hm.id] || []) : [null];
+        for (const ref of refs) {
+          const key = ref ? r.key + "@" + ref : r.key;
+          const item = (S.registers.fire[hm.id] || {})[key] || {};
+          fire.push({ home:hm, module:m, rule, item, key, ref, rag: QA.rag(item, rule, t) });
+        }
+      }
     }
   }
   EV = { all, byId, fire, t, cfg };
@@ -58,11 +66,12 @@ function ownersOf(e){ const role = QA.ownerRole(e.module, e.check.level, cfgNow(
 const isBlankSubmit = e => { const r = S.records[e.check.id]; return r && r.submitted && e.status.state !== "complete" && QA.questionsFor(e.module, e.check.level).length > 0; };
 
 /* ---------- worst status for heat cells ---------- */
+const ratedLabel = x => x.ref ? `${x.ref} · ${x.rule.label}` : x.rule.label;
 const RANK = { outstanding:0, blocked:1, pending:2, due_soon:3, in_progress:4, on_hold:5, upcoming:6, complete:7, na:8 };
 function cellFor(homeId, moduleKey){
   const list = ev().all.filter(e => e.home.id === homeId && e.module.key === moduleKey && e.status.daysLate > -15);
-  if (moduleKey === "fire_property") {
-    const f = ev().fire.filter(x => x.home.id === homeId);
+  if (MOD[moduleKey].rules_categories) {
+    const f = ev().fire.filter(x => x.home.id === homeId && x.module.key === moduleKey);
     if (!f.length) return null;
     const red = f.filter(x => x.rag.status === "RED" || x.rag.status === "NOT_RECORDED").length, amb = f.filter(x => x.rag.status === "AMBER").length;
     return red ? { state:"outstanding", text: red + " red" } : amb ? { state:"due_soon", text: amb + " due" } : { state:"complete", text:"In date" };
@@ -93,6 +102,7 @@ function alertsToday(){
   const t = today(), cfg = cfgNow();
   const list = [];
   for (const e of ev().all) list.push(...QA.checkAlerts(e, { config:cfg, users:S.users, today:t, settings:S.settings }));
+  for (const x of ev().fire) list.push(...QA.registerAlerts(x, { users:S.users, today:t, settings:S.settings }).map(al => Object.assign(al, { title: x.ref ? `${al.title} · ${x.ref}` : al.title })));
   for (const a of Object.values(S.actions)) list.push(...QA.actionAlerts(a, { users:S.users, today:t, homes:S.homes }));
   return list;
 }

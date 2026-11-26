@@ -15,12 +15,12 @@ function actionRow(a){
   const tone = !f.open ? "complete" : f.hold ? "on_hold" : f.overdue ? "outstanding" : f.noDeadline ? "pending" : f.dueSoon ? "due_soon" : "in_progress";
   return h("button",{type:"button",class:"li s-" + tone, onclick:()=>openAction(a.id)},
     h("span",{class:"bar4"}),
-    h("div",null, h("b",null, a.ref + " · " + a.finding), h("small",{text:`${hm ? hm.name : ""} · ${MOD[a.module] ? MOD[a.module].label : a.module} · owner: ${uname(a.ownerId)} · target: ${a.target ? dlong(a.target) : "none set"}`})),
+    h("div",null, h("b",null, a.ref + " · " + a.finding), h("small",{text:`${hm ? hm.name : ""} · ${MOD[a.module] ? MOD[a.module].label : a.module} · owner: ${uname(a.ownerId)} · target: ${a.target ? dlong(a.target) : "none set"}`}), h("small",{text: a.nextStep ? `Next step: ${a.nextStep}${a.nextStepDate ? " · by " + dl(a.nextStepDate) : ""}` : "Next step: not set"})),
     h("div",{class:"r"}, actionFlagChips(f), h("span",{class:"pill nodot p-" + (a.status === "Completed" ? "occ" : a.status === "On hold" ? "away" : a.status === "Awaiting sign-off" ? "ref" : "unset"), text:a.status})));
 }
 function actionFlagChips(f){
   return h("span",{class:"flags"}, f.overdue ? h("span",{class:"flag",text:`${f.daysOver}d overdue`}) : null, f.noDeadline ? h("span",{class:"flag",text:"Deadline required"}) : null,
-    f.noOwner ? h("span",{class:"flag",text:"No owner"}) : null, f.updateDue ? h("span",{class:"flag warn",text:"Update due"}) : null, f.dueSoon ? h("span",{class:"flag info",text:"Due in 7 days"}) : null);
+    f.noOwner ? h("span",{class:"flag",text:"No owner"}) : null, f.prioritised ? h("span",{class:"flag",text:"Head office priority"}) : null, f.nextStepLate ? h("span",{class:"flag warn",text:"Next step late"}) : null, f.updateDue ? h("span",{class:"flag warn",text:"Update due"}) : null, f.dueSoon ? h("span",{class:"flag info",text:"Due in 7 days"}) : null);
 }
 const visibleChecks = () => ev().all.filter(canSee);
 const visibleActions = () => Object.values(S.actions).filter(canSeeAction);
@@ -36,7 +36,7 @@ function viewDashboard(){
   const flags = acts.map(a => QA.actionFlags(a, t));
   const overdueA = flags.filter(f => f.overdue).length, noDl = flags.filter(f => f.noDeadline).length;
   const deficits = checks.filter(e => e.status.state === "complete" && e.status.tally.bad && e.status.daysLate <= 28 && e.status.daysLate >= 0);
-  const fireRed = ev().fire.filter(x => homeFilterIds().includes(x.home.id) && access("fire_property", x.home.id) !== "none" && (x.rag.status === "RED" || x.rag.status === "NOT_RECORDED"));
+  const fireRed = ev().fire.filter(x => x.module.key === "fire_property" && homeFilterIds().includes(x.home.id) && access("fire_property", x.home.id) !== "none" && (x.rag.status === "RED" || x.rag.status === "NOT_RECORDED"));
   const hs = homeFilterIds().map(id => S.homes[id]);
   const running = hs.filter(x => RUNNING.includes(x.status));
   const isHO = QA.HEAD_OFFICE.includes(u.role) || u.role === "viewer";
@@ -181,10 +181,10 @@ function viewActions(filter){
   const t = today();
   const f = filter || S.session.actFilter || "open";
   const all = visibleActions().map(a => ({ a, f:QA.actionFlags(a, t) }));
-  const tabs = [["open","Open",x => x.f.open],["overdue","Overdue",x => x.f.overdue],["nodeadline","Deadline required",x => x.f.noDeadline],["update","Update due",x => x.f.updateDue],["signoff","Awaiting sign-off",x => x.f.needsSignOff],["hold","On hold",x => x.f.hold],["done","Completed",x => !x.f.open],["mine","Mine",x => x.a.ownerId === me().id && x.f.open]];
+  const tabs = [["open","Open",x => x.f.open],["overdue","Overdue",x => x.f.overdue],["nodeadline","Deadline required",x => x.f.noDeadline],["nonext","No next step",x => x.f.noNextStep],["priority","Head office priority",x => x.f.prioritised],["update","Update due",x => x.f.updateDue],["signoff","Awaiting sign-off",x => x.f.needsSignOff],["hold","On hold",x => x.f.hold],["done","Completed",x => !x.f.open],["mine","Mine",x => x.a.ownerId === me().id && x.f.open]];
   const tab = tabs.find(x => x[0] === f) || tabs[0];
   const mf = S.session.actModule || "";
-  const list = all.filter(tab[2]).filter(x => !mf || x.a.module === mf).sort((x, y) => (y.f.daysOver - x.f.daysOver) || String(x.a.target || "9").localeCompare(String(y.a.target || "9")));
+  const list = all.filter(tab[2]).filter(x => !mf || x.a.module === mf).sort((x, y) => (y.f.prioritised - x.f.prioritised) || (y.f.daysOver - x.f.daysOver) || String(x.a.target || "9").localeCompare(String(y.a.target || "9")));
   const canNew = visibleModules().some(m => myHomes().some(hm => QA.atLeast(access(m.key, hm.id), "record")));
   return h("div",{class:"page"},
     phead("My work", "Actions", "Every finding gets an owner, a target date and a mid-point progress update. Statuses: Not started, In progress, Awaiting evidence, Awaiting sign-off, Completed, On hold.", [
@@ -241,39 +241,71 @@ function editAction(a, isNew){
     field("Finding", D("finding", h("input",{type:"text",value:a.finding || ""}))),
     field("What needs to happen", D("action", h("textarea",{text:a.action || "",style:"min-height:60px"}))),
     h("div",{class:"fgrid"}, field("Owner", owner), field("Identified", D("identified", h("input",{type:"date",value:a.identified || ""}))), field("Target date", D("target", h("input",{type:"date",value:a.target || ""})), "required"), field("Progress update due", D("updateDue", h("input",{type:"date",value:a.updateDue || ""})), "default: mid-point")),
+    h("div",{class:"fgrid"}, field("Next step", D("nextStep", h("input",{type:"text",value:a.nextStep || "",placeholder:"e.g. Zara meeting the landlord"})), "what happens next"), field("Next step by", D("nextStepDate", h("input",{type:"date",value:a.nextStepDate || ""})))),
     h("div",{class:"fgrid"}, field("Status", statusSel), field("Evidence / reference", D("evidence", h("input",{type:"text",value:a.evidence || "",placeholder:"file name or link"})))),
+    a.prioritisedBy ? h("div",{class:"banner"}, icon("flag",18), h("div",{text:`Made a priority by ${uname(a.prioritisedBy)} on ${dlong(a.prioritisedOn)}: ${a.prioritisedWhy}`})) : null,
     h("div",{class:"fgrid"}, field("On hold: reason", holdReason), field("On hold: review date", holdReview)),
     a.verifiedBy ? h("div",{class:"banner info",text:`Signed off by ${uname(a.verifiedBy)} on ${dlong(a.verifiedOn)}.`}) : null,
     field("Add a progress update", note),
     (a.comments || []).length ? h("div",null, h("h4",{class:"meta",style:"margin:0 0 6px",text:"History"}), h("div",{class:"comments"}, (a.comments || []).slice().reverse().map(c => h("div",{class:"comment"}, h("small",{text:`${uname(c.by)} · ${tl(c.at)}`}), c.text)))) : null,
-    h("div",{class:"acts"}, h("button",{type:"button",class:"btn ghost",onclick:closeModal,text: canEdit ? "Cancel" : "Close"}), canEdit ? h("button",{type:"button",class:"btn",onclick:doSave,text: isNew ? "Raise action" : "Save"}) : null)
+    h("div",{class:"acts"}, !isNew && f.open && cap("prioritise") && QA.HEAD_OFFICE.includes(me().role) ? h("button",{type:"button",class:"btn ghost",onclick:()=>prioritise(a.id)}, icon("flag"), a.prioritisedBy ? "Change priority note" : "Make this a priority") : null,
+      h("button",{type:"button",class:"btn ghost",onclick:closeModal,text: canEdit ? "Cancel" : "Close"}), canEdit ? h("button",{type:"button",class:"btn",onclick:doSave,text: isNew ? "Raise action" : "Save"}) : null)
   ];
   openModal(isNew ? "New action" : a.finding, body, { wide:true, sub: isNew ? "Owner and target date are required for it to stop showing 'Deadline required'." : `${hm ? hm.name : ""} · ${(MOD[a.module]||{}).label || ""} · raised by ${uname(a.createdBy)}` });
 }
 
+/* Mark, 18 Nov: "Zara, why aren't we making this a priority?" Head office can challenge an action:
+   it becomes High priority, the reason goes in the history, and the owner sees it at the top of their list. */
+function prioritise(id){
+  const a = S.actions[id]; if (!a) return;
+  const why = h("textarea",{placeholder:"Why this needs to move now, and what you expect by when",style:"min-height:70px"});
+  const by = h("input",{type:"date",value:a.nextStepDate || addD(today(), 3)});
+  closeModal();
+  openModal("Make this a priority", [h("p",{class:"meta",text:`${a.ref} · ${a.finding}. The owner (${uname(a.ownerId)}) and the service manager are told in tomorrow's digest, and it moves to the top of the Monday report.`}), field("Reason", why), field("Next step needed by", by),
+    h("div",{class:"acts"}, h("button",{type:"button",class:"btn ghost",onclick:closeModal,text:"Cancel"}), h("button",{type:"button",class:"btn",text:"Make it a priority",onclick:()=>{
+      if (!why.value.trim()) return toast("Say why it is a priority.");
+      Object.assign(a, { priority:"High", prioritisedBy:me().id, prioritisedOn:today(), prioritisedWhy:why.value.trim(), nextStepDate: by.value || a.nextStepDate });
+      a.comments = (a.comments || []).concat({ at:new Date().toISOString(), by:me().id, text:`Made a priority: ${why.value.trim()}` });
+      logAct(`Made action ${a.ref} a priority`, { actionId:a.id }); save(); EV = null; closeModal(); toast("Marked as a priority"); render(); }}))]);
+}
+
 /* ---------- Monday report ---------- */
+const RAGPILL = { RED:["outstanding","Red"], AMBER:["due_soon","Amber"], GREEN:["complete","Green"] };
 function viewReport(){
   const t = today();
   const homes = Object.fromEntries(homeFilterIds().map(id => [id, S.homes[id]]));
   const evaluated = visibleChecks();
-  const rep = QA.mondayReport({ homes, evaluated, actions: visibleActions(), today: t });
-  const fireBy = id => ev().fire.filter(x => x.home.id === id && (x.rag.status === "RED" || x.rag.status === "NOT_RECORDED") && access("fire_property", id) !== "none");
+  const rated = ev().fire.filter(x => homeFilterIds().includes(x.home.id) && access(x.module.key, x.home.id) !== "none");
+  const rep = QA.mondayReport({ homes, evaluated, actions: visibleActions(), today: t, rated });
   const nextMon = (() => { let d = t; while (new Date(d + "T00:00:00Z").getUTCDay() !== 1) d = addD(d, 1); return d; })();
   const recips = Object.values(S.users).filter(u => (S.caps.monday || []).includes(u.role));
-  const sec = (title, items) => items.length ? h("div",{class:"rsec"}, h("h4",{text:`${title} (${items.length})`}), h("ul",null, items)) : null;
+  const sec = (title, items, id) => items.length ? h("div",{class:"rsec",id}, h("h4",{text:`${title} (${items.length})`}), h("ul",null, items)) : null;
+  const jump = id => () => { const el = document.getElementById(id) || document.querySelector(`[id^="${id}"]`); if (el) el.scrollIntoView({ behavior:"smooth", block:"start" }); else toast("Nothing in this section."); };
+  const actLi = (a, extra) => h("li",null, h("a",{href:"#",onclick:ev2 => { ev2.preventDefault(); openAction(a.id); }, text:a.ref}), ` ${a.finding} · ${extra} · ${uname(a.ownerId)} · next step: ${a.nextStep ? a.nextStep + (a.nextStepDate ? " by " + dl(a.nextStepDate) : "") : "not set"}`, a.prioritisedBy ? h("span",{class:"flag",style:"margin-left:6px",text:"priority"}) : null);
   return h("div",{class:"page"},
-    phead("Oversight", "Monday report", `Sent every Monday at ${S.settings.mondayTime} (next: ${dlong(nextMon)}) to ${recips.map(u => u.name).join(", ")}. Home by home: checks not done, deficits, overdue actions and actions due in the next 7 days.`, [
+    phead("Oversight", "Monday report", `Sent every Monday at ${S.settings.mondayTime} (next: ${dlong(nextMon)}) to ${recips.map(u => u.name).join(", ")}. Home by home: what is out of date, what is coming up, and what is in date, with the actions and next steps behind every number. Tap any number or line to drill in.`, [
       h("button",{type:"button",class:"btn ghost",onclick:()=>window.print()}, icon("print"), "Print"),
       h("button",{type:"button",class:"btn ghost",onclick:()=>download(`qa-report-${t}.txt`, QA.mondayText(rep))}, icon("dl"), "Email text")]),
-    h("div",{class:"kpis"}, kpi("Not done", rep.totals.outstanding, "checks past due", rep.totals.outstanding ? "void" : "occ", "alert"), kpi("Deficits", rep.totals.deficits, "audits with not-met answers", "acc", "clipboard"), kpi("Actions overdue", rep.totals.overdueActions, "", rep.totals.overdueActions ? "void" : "occ", "flag"), kpi("Due in 7 days", rep.totals.dueSoon, "actions", "res", "clock"), kpi("Deadline required", rep.totals.noDeadline, "actions with no target date", rep.totals.noDeadline ? "void" : "occ", "cal")),
-    card(null, rep.rows.length ? rep.rows.map(r => { const fr = fireBy(r.home.id); const clean = !r.outstanding.length && !r.deficits.length && !r.overdueActions.length && !r.dueSoon.length && !r.noDeadline.length && !fr.length; return h("div",{class:"report-home"},
-      h("h3",null, h("a",{href:"#/home/" + r.home.id, style:"color:inherit;text-decoration:none", text:r.home.name}), r.home.status === "shadow" ? h("span",{class:"pill p-ref",text:"shadow mode"}) : null, r.outstanding999 ? h("span",{class:"p999",text:r.outstanding999 + " × 999"}) : null, clean ? h("span",{class:"pill p-occ",text:"Nothing outstanding"}) : null),
+    h("div",{class:"kpis"},
+      kpi("Homes red", `${rep.totals.red}/${rep.rows.length}`, "a 999 item not done or out of date", rep.totals.red ? "void" : "occ", "home", jump("rh-")),
+      kpi("Not done", rep.totals.outstanding, "checks past due", rep.totals.outstanding ? "void" : "occ", "alert", ()=>go("#/checks/late")),
+      kpi("Out of date", rep.totals.registerRed, "certificates, fire log, care records", rep.totals.registerRed ? "void" : "occ", "flame", jump("rs-red-")),
+      kpi("Deficits", rep.totals.deficits, "audits with not-met answers", "acc", "clipboard", jump("rs-def-")),
+      kpi("Actions overdue", rep.totals.overdueActions, "", rep.totals.overdueActions ? "void" : "occ", "flag", ()=>go("#/actions/overdue")),
+      kpi("Coming up", rep.totals.dueSoonChecks + rep.totals.dueSoon, "checks and actions due in 7 days", "res", "clock", ()=>go("#/calendar")),
+      kpi("In date", rep.totals.inDate, "done or in date", "occ", "check")),
+    h("div",{class:"banner info"}, icon("book",18), h("div",null, h("b",{text:"RAG for each home [UNVERIFIED]: "}), "Red when a 999 item (finance, medication, H&S, fire & certificates) is not done or out of date, or an action is 14 or more days over. Amber when anything else is outstanding, there are deficits, or an action is overdue or has no deadline. Green when nothing is.")),
+    card(null, rep.rows.length ? rep.rows.map(r => h("div",{class:"report-home",id:"rh-" + r.home.id},
+      h("h3",null, h("a",{href:"#/home/" + r.home.id, style:"color:inherit;text-decoration:none", text:r.home.name}), spill(RAGPILL[r.rag][0], RAGPILL[r.rag][1]), r.home.status === "shadow" ? h("span",{class:"pill p-ref",text:"shadow mode"}) : null, r.outstanding999 ? h("span",{class:"p999",text:r.outstanding999 + " × 999"}) : null, h("span",{class:"meta",style:"font-weight:500",text:`${r.inDate} in date`})),
       sec("Checks not done", r.outstanding.map(e => h("li",null, h("a",{href:"#/check/" + encodeURIComponent(e.check.id), text:checkTitle(e)}), ` · ${e.status.reason} · owner ${roleLabel(ownersOf(e).role)}`))),
-      sec("Fire & certificates not in date", fr.map(x => h("li",{text:`${x.rule.label}: ${x.rag.reason}`}))),
-      sec("Deficits (done, but not met)", r.deficits.map(e => h("li",null, h("a",{href:"#/check/" + encodeURIComponent(e.check.id), text:checkTitle(e)}), ": " + e.status.tally.badItems.join("; ")))),
-      sec("Actions overdue", r.overdueActions.map(({ a, f }) => h("li",null, h("a",{href:"#",onclick:ev2 => { ev2.preventDefault(); openAction(a.id); }, text:a.ref}), ` ${a.finding} · ${f.daysOver} days over · ${uname(a.ownerId)}`))),
-      sec("Actions due in the next 7 days", r.dueSoon.map(({ a }) => h("li",null, h("a",{href:"#",onclick:ev2 => { ev2.preventDefault(); openAction(a.id); }, text:a.ref}), ` ${a.finding} · due ${dl(a.target)} · ${uname(a.ownerId)}`))),
-      sec("Deadline required", r.noDeadline.map(({ a }) => h("li",null, h("a",{href:"#",onclick:ev2 => { ev2.preventDefault(); openAction(a.id); }, text:a.ref}), ` ${a.finding}`)))); }) : empty("No homes are running yet."), { raw:true }));
+      sec("Out of date: certificates, fire log, care records", r.registerRed.map(x => h("li",null, h("a",{href:`#/home/${r.home.id}/${x.module.key}`, text:ratedLabel(x)}), `: ${x.rag.reason}`)), "rs-red-" + r.home.id),
+      sec("Deficits (done, but not met)", r.deficits.map(e => h("li",null, h("a",{href:"#/check/" + encodeURIComponent(e.check.id), text:checkTitle(e)}), ": " + e.status.tally.badItems.join("; "))), "rs-def-" + r.home.id),
+      sec("Actions overdue", r.overdueActions.map(({ a, f }) => actLi(a, `${f.daysOver} days over`))),
+      sec("Actions due in the next 7 days", r.dueSoon.map(({ a }) => actLi(a, `due ${dl(a.target)}`))),
+      sec("Deadline required", r.noDeadline.map(({ a }) => actLi(a, "no target date"))),
+      sec("Late or due actions with no next step", r.noNextStep.map(({ a }) => actLi(a, a.status))),
+      sec("Coming up in the next 7 days", [...r.dueSoonChecks.map(e => h("li",null, h("a",{href:"#/check/" + encodeURIComponent(e.check.id), text:checkTitle(e)}), ` · due ${dl(e.check.due)}`)), ...r.registerSoon.filter(x => diffD(t, x.rag.due) <= 7).map(x => h("li",null, h("a",{href:`#/home/${r.home.id}/${x.module.key}`, text:ratedLabel(x)}), ` · ${x.rag.reason}`))]),
+      r.rag === "GREEN" && !r.dueSoonChecks.length ? h("div",{class:"meta",text:"Nothing outstanding."}) : null)) : empty("No homes are running yet."), { raw:true }));
 }
 
 /* ---------- alerts (what would be emailed today) ---------- */
@@ -285,11 +317,11 @@ function viewAlerts(){
   const shown = mineOnly ? ds.filter(d => d.user.id === me().id) : ds;
   const fsel = S.session.alertUser || "";
   const list = fsel ? shown.filter(d => d.user.id === fsel) : shown;
-  const KIND = { escalated:["Escalated","outstanding"], outstanding:["Outstanding","outstanding"], action_overdue:["Action overdue","pending"], action_update:["Update due","due_soon"], heads_up:["Heads-up","due_soon"] };
+  const KIND = { prioritised:["Priority","outstanding"], escalated:["Escalated","outstanding"], outstanding:["Outstanding","outstanding"], action_overdue:["Action overdue","pending"], action_update:["Update due","due_soon"], heads_up:["Heads-up","due_soon"] };
   return h("div",{class:"page"},
     phead("Oversight", "Alerts", `The digest emails that go out on ${dlong(t)} at ${S.settings.digestTime}: one email per person, never one per check. Change the date in the demo panel to see other days.`, mineOnly ? null : [sel([["", "Everyone"], ...ds.map(d => [d.user.id, `${d.user.name} (${d.items.length})`])], fsel, v => { S.session.alertUser = v; save(); render(); })]),
     h("div",{class:"banner info"}, icon("bell",18), h("div",null, "Alerts are only for checks that have ", h("b",{text:"not been done"}), ". A check done with 'not met' answers is not alerted: the manager follows it up and it shows in the Monday report. Support workers are never notified. Head office is copied ", h("b",{text: S.settings.headOfficeFrom === "first" ? "from the first alert (Mark's rule, 24 Nov)" : "only when escalated"}), ".")),
-    h("div",{class:"grid2"}, list.length ? list.map(d => card(`${d.user.name}`, h("div",{class:"list"}, d.items.map(it => h("div",{class:"li s-" + KIND[it.kind][1], style:"cursor:pointer", onclick:()=> it.checkId ? go("#/check/" + encodeURIComponent(it.checkId)) : openAction(it.actionId)},
+    h("div",{class:"grid2"}, list.length ? list.map(d => card(`${d.user.name}`, h("div",{class:"list"}, d.items.map(it => h("div",{class:"li s-" + KIND[it.kind][1], style:"cursor:pointer", onclick:()=> it.checkId ? go("#/check/" + encodeURIComponent(it.checkId)) : it.ruleKey ? go(`#/home/${it.homeId}/${it.module}`) : openAction(it.actionId)},
         h("span",{class:"bar4"}), h("div",null, h("b",{text:`${S.homes[it.homeId].name} · ${it.title}`}), h("small",{text:`${it.reason} · why you: ${it.why.join(", ")}`})), h("div",{class:"r"}, it.priority === "999" ? h("span",{class:"p999",text:"999"}) : null, spill(KIND[it.kind][1], KIND[it.kind][0]))))), { raw:true, sub:`${roleLabel(d.user.role)} · ${d.user.email} · ${nplural(d.items.length, "item")}` })) : card(null, empty("No alerts go out on this day."))));
 }
 
@@ -299,11 +331,15 @@ function viewCalendar(){
   const days = +(S.session.ahead || 14);
   const items = visibleChecks().filter(e => e.status.daysLate <= 0 && e.status.daysLate >= -days && !["complete","na"].includes(e.status.state));
   const acts = visibleActions().filter(a => { const f = QA.actionFlags(a, t); return f.live && a.target && a.target >= t && diffD(t, a.target) <= days; });
+  const regs = ev().fire.filter(x => homeFilterIds().includes(x.home.id) && access(x.module.key, x.home.id) !== "none" && x.rag.due && x.rag.due >= t && diffD(t, x.rag.due) <= days);
   const byDay = {};
-  items.forEach(e => (byDay[e.check.due] = byDay[e.check.due] || { c:[], a:[] }).c.push(e));
-  acts.forEach(a => (byDay[a.target] = byDay[a.target] || { c:[], a:[] }).a.push(a));
+  const slot = d => (byDay[d] = byDay[d] || { c:[], a:[], r:[] });
+  items.forEach(e => slot(e.check.due).c.push(e));
+  acts.forEach(a => slot(a.target).a.push(a));
+  regs.forEach(x => slot(x.rag.due).r.push(x));
+  const regRow = x => h("button",{type:"button",class:"li s-due_soon",onclick:()=>go(`#/home/${x.home.id}/${x.module.key}`)}, h("span",{class:"bar4"}), h("div",null, h("b",{text:`${x.home.name} · ${x.module.label} · ${ratedLabel(x)}`}), h("small",{text:x.rag.reason})), h("div",{class:"r"}, p999(x.module), basis(x.rule.basis)));
   const keys = Object.keys(byDay).sort();
   return h("div",{class:"page"},
-    phead("My work", "Forward look", "What falls due, day by day. Owners get a heads-up before each due date.", [h("div",{class:"seg",role:"group"}, [7,14,30].map(n => h("button",{type:"button","aria-pressed":String(days === n),onclick:()=>{ S.session.ahead = n; save(); render(); },text:`${n} days`})))]),
-    card(null, keys.length ? h("div",{class:"list"}, keys.map(k => [h("div",{class:"grouph",text:`${dlong(k)}${k === t ? " · today" : ""}`}), byDay[k].c.map(e => checkRow(e)), byDay[k].a.map(actionRow)])) : empty("Nothing due in this window."), { raw:true }));
+    phead("My work", "Forward look", "What falls due, day by day: checks, actions, certificates and care record reviews. Owners get a heads-up before each due date.", [h("div",{class:"seg",role:"group"}, [7,14,21,30,90].map(n => h("button",{type:"button","aria-pressed":String(days === n),onclick:()=>{ S.session.ahead = n; save(); render(); },text:`${n} days`})))]),
+    card(`Next ${days} days`, keys.length ? h("div",{class:"list"}, keys.map(k => [h("div",{class:"grouph",text:`${dlong(k)}${k === t ? " · today" : ""}`}), byDay[k].c.map(e => checkRow(e)), byDay[k].r.map(regRow), byDay[k].a.map(actionRow)])) : empty("Nothing due in this window."), { raw:true, sub:`${items.length} checks, ${regs.length} certificates or reviews and ${acts.length} actions due in the next ${days} days.` }));
 }

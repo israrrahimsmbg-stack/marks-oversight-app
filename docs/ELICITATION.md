@@ -120,6 +120,9 @@ When a question is answered: fill **Answer**, set **Status** to `answered (date,
 | Q6 | Live front end: Power Apps canvas app, or this web page hosted in SharePoint with Microsoft sign-in? | IT, ZACK | | open |
 | Q7 | Do onboarding documents count as late 7 days after move-in, and which documents are required? | Hamida, finance | | open |
 | Q8 | Who signs off a completed action: service manager, or always head office for 999 items? | Hamida | | open |
+| Q9 | Is the proposed home RAG right? Red = a 999 item (finance, medication, H&S, fire & certificates) not done or out of date, or an action 14+ days over; Amber = anything else outstanding, deficits, overdue actions or no deadline; Green = nothing. | Mark | | open |
+| Q10 | Care records (support plans, risk assessments, council reviews, funding packages, DoLS): which tracker holds the review dates per resident, a new per-home tracker or the occupancy tracker? Are 6-monthly support plan and risk assessment reviews the right policy? | Hamida | | open |
+| Q11 | Should certificates and care records alert 30, 14, 7 and 1 days before they fall due, and escalate to head office at 14 days over (as checks do)? | Hamida | | open |
 
 ## Documents to request
 
