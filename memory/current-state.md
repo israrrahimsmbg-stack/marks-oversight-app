@@ -1,10 +1,35 @@
 ---
 title: Current state
-last_reviewed: 2026-11-20
+last_reviewed: 2026-11-26
 review_every_days: 7
 ---
 
-# Current state (as of 2026-11-20)
+# Current state (as of 2026-11-26)
+
+## Update 2026-11-26 (later): traceability check
+
+- ZACK asked whether all notes, history and purpose were used. Every ask is now mapped in `docs/TRACEABILITY.md`.
+- 14 gaps were fixed in the same PR:
+  - care records module (support plans, risk assessments, reviews, funding, DoLS, per resident)
+  - action next step and date
+  - head office "make this a priority"
+  - home RAG, plus out of date / coming up / in date in the Monday report
+  - forward look at 21 and 90 days, including certificates
+  - alerts for certificates and care records
+  - review pack per home
+  - maintenance comment history
+  - tracker files register with a stray-copy flag
+  - settings editable by Mark, Nafisa, Hamida and Zara's roles
+- New questions Q9 to Q11.
+
+## Update 2026-11-26: QA app preview built
+
+- Mark announced the "QA App" (email 25 Nov), rolling out home by home from **Hall Close** (now the pilot, not the Grange).
+- Built a full working preview in `app/` (same build style as the Operations app) with logic in `src/qa/` and 18 tests: statuses, blank-template block, dependency chain, alert ladder, shadow mode, leave cover, actions, Monday report, role access matrix, modules switchable per home. Design: `docs/QA_APP.md`; ADR-0010.
+- Next: Mark, Hamida and Zara react to the preview; answer ELICITATION Q1 to Q8; Hamida signs off module timings; then build the SharePoint lists and the nightly sync for Hall Close Wave 1 (Finance, Medication, H&S, Fire).
+- Blockers: IT for the live front end and sign-in (Q6), shared mailbox (G8).
+
+# Earlier state (as of 2026-11-20)
 
 **Phase:** 0 finishing (Operations app go-live Tue 2026-11-24); 1a discovery starting.
 

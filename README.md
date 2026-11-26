@@ -27,6 +27,8 @@ It extends the existing **Esto Care Operations app** (Phase 0, going live Tue 24
 | [`docs/COMPLIANCE_RULES.md`](docs/COMPLIANCE_RULES.md) | Expiry and frequency rules per item type (**unverified until signed off**) |
 | [`docs/GLOSSARY.md`](docs/GLOSSARY.md) | Terms and acronyms |
 | [`docs/RESEARCH.md`](docs/RESEARCH.md) | Open-source libraries and tools considered, with licences and reasons |
+| [`docs/QA_APP.md`](docs/QA_APP.md) | **The QA & Compliance app** (Mark's "QA App", 25 Nov 2026): statuses, alerts, modules, rollout, access matrix. Preview in `app/` (`npm run build:app`) |
+| [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) | Every ask from the calls, BRD, questionnaire, emails and plan, and where the QA app meets it |
 | [`docs/POWER_PLATFORM_DESIGN.md`](docs/POWER_PLATFORM_DESIGN.md) | **The build platform** (decided 20 Nov 2026): SharePoint lists, flows, Power Fx RAG formula, licensing guardrails |
 | [`docs/RAG_ACCEPTANCE_SCENARIOS.md`](docs/RAG_ACCEPTANCE_SCENARIOS.md) | Cases the flows and app must pass |
 | [`docs/ESTOCARE_OPS_APP.md`](docs/ESTOCARE_OPS_APP.md) | What the existing Operations app already does, and how this app fits on top |

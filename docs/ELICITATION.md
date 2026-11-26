@@ -1,7 +1,7 @@
 ---
 title: Elicitation questions
 status: OPEN
-last_reviewed: 2026-11-20
+last_reviewed: 2026-11-26
 review_every_days: 7
 ---
 
@@ -107,6 +107,22 @@ When a question is answered: fill **Answer**, set **Status** to `answered (date,
 | H2 | What could make managers not use it? | | open |
 | H3 | Budget, tools and time constraints? | | open |
 | H4 | Anything Mark has said he does not want? | | open |
+
+## Q. QA app (new, 26 Nov 2026)
+
+| # | Question | Ask | Answer | Status |
+|---|---|---|---|---|
+| Q1 | ★ Head office copied into every alert (Mark's email, 24 Nov), or only escalations plus the Monday report (recommended, to keep inboxes usable)? | Mark | | open |
+| Q2 | ★ Keep IronOak H&S, maintenance and occupancy on the app against Zara's preference? Built in and switchable per home. | Mark, Zara | | open |
+| Q3 | When is a monthly check due (assumed 3 days after its 4th week) and a quarterly (7 days after week 13)? | Hamida | | open |
+| Q4 | Supervision frequency (8 weeks assumed) and renewal periods for each mandatory training course? | Hamida | | open |
+| Q5 | Hall Close go-live date for alerts, after one week of shadow mode? | Mark, Hamida | | open |
+| Q6 | Live front end: Power Apps canvas app, or this web page hosted in SharePoint with Microsoft sign-in? | IT, ZACK | | open |
+| Q7 | Do onboarding documents count as late 7 days after move-in, and which documents are required? | Hamida, finance | | open |
+| Q8 | Who signs off a completed action: service manager, or always head office for 999 items? | Hamida | | open |
+| Q9 | Is the proposed home RAG right? Red = a 999 item (finance, medication, H&S, fire & certificates) not done or out of date, or an action 14+ days over; Amber = anything else outstanding, deficits, overdue actions or no deadline; Green = nothing. | Mark | | open |
+| Q10 | Care records (support plans, risk assessments, council reviews, funding packages, DoLS): which tracker holds the review dates per resident, a new per-home tracker or the occupancy tracker? Are 6-monthly support plan and risk assessment reviews the right policy? | Hamida | | open |
+| Q11 | Should certificates and care records alert 30, 14, 7 and 1 days before they fall due, and escalate to head office at 14 days over (as checks do)? | Hamida | | open |
 
 ## Documents to request
 
