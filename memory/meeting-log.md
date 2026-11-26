@@ -1,10 +1,22 @@
 ---
 title: Meeting log
-last_reviewed: 2026-11-19
+last_reviewed: 2026-11-26
 review_every_days: 14
 ---
 
 # Meeting log
+
+## 2026-11-25: Call with Hamida and Zara (Teams transcript, 1h29m)
+
+- Walked through the Hall Close drive (HomesCentral > Audits > CCC > Hall Close > Audits 2026), "New system" folders per area.
+- Finance: weekly (team leader) > monthly (deputy) > quarterly (service manager); each depends on the one below. 18 weekly checks. Blank templates were uploaded as "done" (Week 4). Must also check MCA / best-interest / financial support plan is on file and in date.
+- Alert only when a check is not done; "Not met" is chased by the line manager. Pending on the due day, Outstanding from 1 day late.
+- Action statuses agreed: Not started, In progress, Awaiting evidence, Awaiting sign-off, Completed, On hold (e.g. resident in hospital).
+- 999 priority: fire, certificates, H&S, medication, finance. Infection control quarterly with softer alerts.
+- Zara: IronOak weekly H&S is for the landlord, she chases it; maintenance tracker sent every Friday, reviewed fortnightly; managers need comment history. ZACK later said include everything.
+- Occupancy: the finance team's tracker is the master; Mon and Fri updates.
+- Hall Close recipients: one team leader (no longer the Pendragon one), the deputy and the service manager. No deputy at CLS and Hermitage; Effingham has two team leaders.
+- Hamida will tell Mark a realistic timeline; pilot Hall Close only.
 
 Newest first. Source documents are in the project's shared files, not in this repo.
 

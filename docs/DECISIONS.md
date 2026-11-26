@@ -56,3 +56,12 @@ Format: one section per decision. Status is `proposed`, `accepted`, `superseded 
 - **Status:** accepted (20 Nov 2026).
 - **Decision:** `src/rules/` and its tests define the behaviour. `docs/RAG_ACCEPTANCE_SCENARIOS.md` lists the cases the nightly RAG flow and the Power Fx formula must pass. Rules stay mastered in `config/rules.json` and are exported to the TrackerTypes list (`npm run export:tracker-types`).
 - **Why:** Power Fx and flow logic are hard to unit test; a tested reference catches mistakes before Mark sees a wrong red.
+
+## ADR-0010: QA app preview built like the Operations app; live build on Microsoft 365
+
+- **Status:** proposed (26 Nov 2026), ZACK asked for the QA app "as you made the Esto Care Operations app".
+- **Decision:** The QA & Compliance app is built in `app/` the same way as the Operations app: one page, vanilla JavaScript, inlined by a build script (`npm run build:app`), published as a Claude artifact for review. Its logic lives in `src/qa/` (pure, tested, no dependencies) next to `src/rules/`, and is inlined into the page so the preview always behaves like the tests. Data shapes match the SharePoint lists in `docs/QA_APP.md`.
+- **Why:** Mark, Hamida and managers can click through every screen now, while IT's Microsoft sign-in rule (ADR-0007) still points the live build at Microsoft 365 (ADR-0002). One logic, two front ends at most.
+- **Consequences:** The preview has no real sign-in and holds data in the browser only, so it must never hold real names or resident data. Before go-live, choose with IT: Power Apps canvas app, or this page hosted in SharePoint with Microsoft sign-in (ELICITATION Q6). Flows must pass the same cases as `tests/qa.test.js`.
+- **Pilot home** changes from the Grange to Hall Close (Mark's email, 25 Nov 2026).
+

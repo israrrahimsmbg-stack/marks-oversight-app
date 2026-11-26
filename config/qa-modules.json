@@ -1,0 +1,183 @@
+{
+  "_about": "QA app modules: the trackers Hamida is standardising (Hall Close is the model). Each module can be switched on per home. Timings and owners come from the 25 Nov 2026 call with Hamida and Zara and Mark's emails of 24-25 Nov 2026. Everything here is INTERNAL ESTO CARE POLICY unless a module says otherwise, and every timing is UNVERIFIED until Hamida signs it off in docs/QA_APP.md.",
+  "version": "0.1.0",
+  "last_reviewed": "2026-11-26",
+  "review_every_days": 30,
+  "status": "UNVERIFIED",
+  "levels": {
+    "weekly":    { "label": "Weekly",    "owner": "team_leader",     "heads_up_days": 2,  "outstanding_after_days": 1, "repeat_every_days": 2, "escalate_after_days": 7 },
+    "monthly":   { "label": "Monthly",   "owner": "deputy_manager",  "heads_up_days": 5,  "outstanding_after_days": 1, "repeat_every_days": 2, "escalate_after_days": 7 },
+    "quarterly": { "label": "Quarterly", "owner": "service_manager", "heads_up_days": 10, "outstanding_after_days": 1, "repeat_every_days": 3, "escalate_after_days": 14 },
+    "twice_weekly": { "label": "Monday and Friday", "owner": "service_manager", "heads_up_days": 0, "outstanding_after_days": 1, "repeat_every_days": 1, "escalate_after_days": 7 },
+    "monthly_simple": { "label": "Monthly", "owner": "service_manager", "heads_up_days": 5, "outstanding_after_days": 1, "repeat_every_days": 3, "escalate_after_days": 7 },
+    "weekly_update": { "label": "Friday update", "owner": "service_manager", "heads_up_days": 0, "outstanding_after_days": 1, "repeat_every_days": 2, "escalate_after_days": 7 }
+  },
+  "answer_sets": {
+    "met":  { "options": ["Met", "Not met", "N/A"], "bad": ["Not met"] },
+    "yes":  { "options": ["Yes", "No", "N/A"], "bad": ["No"] },
+    "yes_reverse": { "options": ["No", "Yes", "N/A"], "bad": ["Yes"] },
+    "done": { "options": ["Done", "Not done"], "bad": ["Not done"] }
+  },
+  "modules": [
+    {
+      "key": "finance", "label": "Finance", "short": "FIN", "icon": "pound", "priority": "999", "wave": 1,
+      "summary": "Residents' money: weekly checks by the team leader, a monthly roll-up by the deputy after four weeks, and a quarterly sign-off by the service manager.",
+      "tracker": "Finance Audit Tracker (Excel): Weekly Finance Audits, Monthly Roll-Up, Quarterly Governance, Finance Actions, Financial Variances",
+      "basis": "policy",
+      "basis_note": "Internal Esto Care policy. Supports CQC Reg 13 (safeguarding from financial abuse) and Reg 17 (good governance). The MCA 2005 needs a capacity assessment, or a best-interest decision, before staff manage someone's money.",
+      "source_url": "https://www.legislation.gov.uk/uksi/2014/2936/regulation/13",
+      "chain": ["weekly", "monthly", "quarterly"],
+      "periods": { "weekly": 13, "monthly": 3, "quarterly": 1 },
+      "checks": {
+        "weekly": { "answers": "met", "questions": [
+          "Cash balances reconciled", "All receipts present", "Petty cash float reconciled", "Resident money balances checked",
+          "Individual finance ledgers current", "Transactions authorised", "Resident choice/consent evidenced", "MCA/appointee arrangements checked",
+          "Purchases matched to receipts", "No unexplained cash shortages", "Bank/card records reconciled", "Invoices/payment records current",
+          "Benefits/rent issues escalated", "Cash and cards securely stored", "Financial safeguarding signs reviewed", "Financial records confidential",
+          "Outstanding discrepancies followed up", "Management spot-check evidenced"
+        ] },
+        "monthly": { "answers": "met", "questions": [
+          "All four weekly audits checked against evidence", "Financial variances reviewed", "Open finance actions reviewed and dated",
+          "MCA / best-interest / financial support plan in date for every resident whose money we handle", "Second signatures sampled", "Monthly review signed off"
+        ] },
+        "quarterly": { "answers": "met", "questions": [
+          "Safeguarding and financial irregularities reviewed", "Repeat variances reviewed", "Evidence of resident choice sampled",
+          "Finance competencies of staff checked", "Unresolved actions reviewed", "Management assurance given"
+        ] }
+      },
+      "register": "finance_capacity"
+    },
+    {
+      "key": "medication", "label": "Medication", "short": "MED", "icon": "pill", "priority": "999", "wave": 1,
+      "summary": "Weekly medicines audit across eight areas, then a monthly audit by the deputy and a quarterly audit by the service manager.",
+      "tracker": "Medication Audits (Excel): Weekly Audits, Monthly Audits, Quarterly Audit, Actions",
+      "basis": "guidance",
+      "basis_note": "Recognised standard: NICE NG67 (managing medicines for adults receiving social care in the community) recommends regular medicines audits. Audit frequency is internal Esto Care policy. Supports CQC Reg 12.",
+      "source_url": "https://www.nice.org.uk/guidance/ng67",
+      "chain": ["weekly", "monthly", "quarterly"],
+      "periods": { "weekly": 13, "monthly": 3, "quarterly": 1 },
+      "rag_green": 0.95, "rag_amber": 0.8,
+      "checks": {
+        "weekly": { "answers": "met", "questions": [
+          "MAR / eMAR complete, no gaps or wrong codes", "Stock counts match records", "Controlled drugs: register and second signatures",
+          "PRN protocols in place and followed", "Storage locked, tidy and labelled", "Fridge/room temperatures recorded and in range",
+          "Recording of changes, allergies and leave", "Staff competency in date for everyone giving medicines"
+        ] },
+        "monthly": { "answers": "met", "questions": [
+          "MAR / eMAR sample checked", "Stock and ordering for next cycle", "Controlled drugs reconciled", "PRN use reviewed",
+          "Storage and temperatures reviewed", "Staff competency records checked", "Medication incidents reviewed and reported"
+        ] },
+        "quarterly": { "answers": "met", "questions": [
+          "Weekly and monthly coverage complete", "Trends in errors and incidents reviewed", "Pharmacy / GP issues followed up",
+          "Medication policy followed", "Senior sign-off given"
+        ] }
+      }
+    },
+    {
+      "key": "health_safety", "label": "Health & Safety (IronOak)", "short": "H&S", "icon": "shield", "priority": "999", "wave": 1,
+      "summary": "Weekly landlord property check (IronOak) of 19 items across the communal areas and each room.",
+      "tracker": "IronOak 4-Week Health & Safety Tracker (Excel): one sheet per week plus Issues & Actions",
+      "basis": "legal",
+      "basis_note": "Legal requirement for the landlord and responsible person to keep the property safe (Regulatory Reform (Fire Safety) Order 2005; Gas Safety Regs 1998; Housing Act 2004 HHSRS). The weekly checklist itself is the landlord's and Esto Care's policy. Zara prefers to chase this herself; included at ZACK's request, Mark to decide.",
+      "source_url": "https://www.legislation.gov.uk/uksi/2005/1541/contents",
+      "chain": ["weekly"],
+      "periods": { "weekly": 13 },
+      "checks": {
+        "weekly": { "answers": "yes", "questions": [
+          "Occupancy confirmed", "Carbon monoxide alarm fitted and operational", "All exit doors secure and locks operational",
+          "All windows secure and locks operational", "Door entry system operational", "External walkways clear", "External bin storage clean and tidy",
+          "Internal passageways clear", { "q": "Any trip hazards", "answers": "yes_reverse" }, "All lighting operational", "Hot water and heating operational",
+          "Cooking equipment operational and fit for purpose", "Electrical equipment operational and fit for purpose", "Plug sockets in good condition",
+          "Power sockets not overloaded", "PAT testing in date and visible", "Gas safety certificate displayed and in date",
+          "Bedroom furniture in good condition", "Plumbing, toilets, sinks and showers clean and operational"
+        ] }
+      }
+    },
+    {
+      "key": "fire_property", "label": "Fire & certificates", "short": "FIRE", "icon": "flame", "priority": "999", "wave": 1,
+      "summary": "Fire log, drills, emergency lighting and the property certificates (gas, EICR, fire risk assessment and more), rated by the tested rules engine.",
+      "tracker": "Fire log and certificates (per home)",
+      "basis": "mixed",
+      "basis_note": "Each item shows its own basis (legal, guidance or policy) and source from config/rules.json.",
+      "rules_categories": ["fire", "property"]
+    },
+    {
+      "key": "infection_control", "label": "Infection control", "short": "IPC", "icon": "drop", "priority": "standard", "wave": 2,
+      "summary": "Quarterly infection prevention and control audit. Softer alerts: a reminder 2 weeks and 1 week before, and the first alert only at 7 days late.",
+      "tracker": "Infection Control Audit (Word form today; Hamida converting to Excel)",
+      "basis": "legal",
+      "basis_note": "Legal requirement: Health and Social Care Act 2008 Code of Practice on the prevention and control of infections (regulated services). Quarterly frequency is internal policy.",
+      "source_url": "https://www.gov.uk/government/publications/the-health-and-social-care-act-2008-code-of-practice-on-the-prevention-and-control-of-infections-and-related-guidance",
+      "chain": ["quarterly"],
+      "periods": { "quarterly": 1 },
+      "timing_override": { "quarterly": { "heads_up_days": 14, "outstanding_after_days": 7, "repeat_every_days": 7, "escalate_after_days": 14 } },
+      "checks": {
+        "quarterly": { "answers": "met", "questions": [
+          "Hand hygiene facilities and practice", "PPE available and used correctly", "Cleaning schedules completed", "Kitchen and food hygiene",
+          "Laundry handled safely", "Clinical and general waste", "Sharps (if used)", "Outbreak plan and contacts current", "Staff IPC training in date"
+        ] }
+      }
+    },
+    {
+      "key": "maintenance", "label": "Maintenance", "short": "MNT", "icon": "wrench", "priority": "standard", "wave": 2,
+      "summary": "One maintenance tracker per home. Managers update it every Friday instead of emailing it round; repairs past their target show in the Monday report.",
+      "tracker": "Maintenance tracker (one per home; no copies)",
+      "basis": "policy",
+      "basis_note": "Internal policy. Supports CQC Reg 15 (premises) and the landlord's repair duties. Zara reviews it with managers every two weeks.",
+      "chain": ["weekly_update"],
+      "update_days": [5],
+      "register": "maintenance"
+    },
+    {
+      "key": "occupancy", "label": "Occupancy", "short": "OCC", "icon": "bed", "priority": "standard", "wave": 2,
+      "summary": "The finance team's occupancy tracker is the master. Managers confirm it is up to date every Monday and Friday; onboarding documents for new residents are flagged when late. Head office only.",
+      "tracker": "Esto Care Occupancy Tracker (finance master copy)",
+      "basis": "policy",
+      "basis_note": "Internal policy. Initials or references only, never full names (UK GDPR data minimisation).",
+      "chain": ["twice_weekly"],
+      "update_days": [1, 5],
+      "personal_data": true,
+      "register": "onboarding"
+    },
+    {
+      "key": "qa_audit", "label": "QA audit actions", "short": "QA", "icon": "clipboard", "priority": "standard", "wave": 3,
+      "summary": "Hamida's monthly QA visit. The app tracks the actions only: owner, target date and a progress update at the 2-week mid-point.",
+      "tracker": "QA Audit (monthly visit report and action plan)",
+      "basis": "policy",
+      "basis_note": "Internal policy. Supports CQC Reg 17 (good governance: audit and improve).",
+      "chain": ["monthly_simple"],
+      "owner_override": "head_compliance",
+      "action_update_days": 14
+    },
+    {
+      "key": "spot_checks", "label": "Spot checks & visits", "short": "SPOT", "icon": "eye", "priority": "standard", "wave": 3,
+      "summary": "Monthly unannounced day or night visit by the manager: done or not done.",
+      "tracker": "Spot checks & unannounced visits (Word forms)",
+      "basis": "policy",
+      "basis_note": "Internal policy.",
+      "chain": ["monthly_simple"],
+      "checks": { "monthly_simple": { "answers": "done", "questions": ["Unannounced visit carried out and form uploaded"] } }
+    },
+    {
+      "key": "manager_report", "label": "Manager monthly report", "short": "MMR", "icon": "report", "priority": "standard", "wave": 3,
+      "summary": "The service manager's monthly report: submitted or not.",
+      "tracker": "Manager Monthly Reports",
+      "basis": "policy",
+      "basis_note": "Internal policy.",
+      "chain": ["monthly_simple"],
+      "checks": { "monthly_simple": { "answers": "done", "questions": ["Monthly report submitted"] } }
+    },
+    {
+      "key": "supervision_training", "label": "Supervision & training", "short": "S&T", "icon": "people", "priority": "standard", "wave": 3,
+      "summary": "Each staff member's supervision and mandatory training due and expiry dates. Waiting for Hamida's trackers.",
+      "tracker": "Supervision and training trackers (Hamida, in progress)",
+      "basis": "mixed",
+      "basis_note": "Legal requirement: CQC Reg 18 (staffing: support, training, supervision) and the Health and Care Act 2022 (Oliver McGowan training). Frequencies are internal policy.",
+      "source_url": "https://www.legislation.gov.uk/uksi/2014/2936/regulation/18",
+      "personal_data": true,
+      "register": "staff"
+    }
+  ],
+  "action_statuses": ["Not started", "In progress", "Awaiting evidence", "Awaiting sign-off", "Completed", "On hold"],
+  "action_priorities": ["High", "Medium", "Low"]
+}

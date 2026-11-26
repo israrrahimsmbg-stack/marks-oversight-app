@@ -1,6 +1,6 @@
 ---
 title: Business decisions
-last_reviewed: 2026-11-20
+last_reviewed: 2026-11-26
 review_every_days: 30
 ---
 
@@ -10,6 +10,10 @@ Newest first. Architectural decisions are ADRs in `docs/DECISIONS.md`.
 
 | Date | Decision | Who | Source |
 |---|---|---|---|
+| 2026-11-26 | QA app built in `app/` the same way as the Operations app (preview), logic in `src/qa/`; live build stays on Microsoft 365 for sign-in (ADR-0010). Everything in scope, modules switched on per home, Finance/Medication/H&S/Fire first. | ZACK (with Claude) | thread "Build the QA compliance app" |
+| 2026-11-25 | Alert only when a check is not done; "Not met" is a deficit, not overdue. Ladder: team leader (weekly) > deputy (monthly) > service manager (quarterly); each level depends on the one below. Action statuses: Not started, In progress, Awaiting evidence, Awaiting sign-off, Completed, On hold. Finance checks must include MCA / best-interest records. | Hamida | 25 Nov call transcript |
+| 2026-11-25 | Rollout home by home: Hall Close, Pendragon, Effingham, Ragstone Rd, Stoke Poges, Waxlow, Lambourne, Queenswood, Hermitage, Wansbeck A, Wansbeck H. Staff keep SharePoint trackers; app reads them, alerts until done; Mark, Nafisa and Hamida get all alerts; Monday report by home. | Mark | emails 24 and 25 Nov |
+| 2026-11-25 | Include everything (IronOak H&S, maintenance, occupancy, infection control, QA actions, spot checks, manager reports, supervision & training) even where Zara prefers not. | ZACK | project chat 25 Nov |
 | 2026-11-20 | Platform: Power Apps + Power Automate on SharePoint Lists (ADR-0002). Standard connectors only to stay within Microsoft 365 licences. | ZACK (decision card) | thread 20 Nov |
 | 2026-11-20 | Staff must sign in with company Microsoft accounts (Entra ID). | IT, relayed by ZACK | thread message 20 Nov |
 | 2026-11-19 | Escalation goes to the service manager; Mark and Hamida are last resort; support workers are not notified. | Hamida (citing Mark) | 19 Nov transcript ~13:51, 15:13 |
